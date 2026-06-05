@@ -1,0 +1,38 @@
+name: Import Creators to monday
+
+on:
+  workflow_dispatch:
+    inputs:
+      csv_file:
+        description: "CSV file path"
+        required: true
+        default: "data/sample_creators.csv"
+      group:
+        description: "monday group key"
+        required: true
+        default: "new_leads"
+
+jobs:
+  import-creators:
+    runs-on: ubuntu-latest
+
+    env:
+      MONDAY_TOKEN: ${{ secrets.MONDAY_TOKEN }}
+      MONDAY_API_KEY: ${{ secrets.MONDAY_API_KEY }}
+      MONDAY_BOARD_ID: 18416535896
+      MONDAY_DEFAULT_GROUP_ID: group_mm41wfhq
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Import creators
+        run: python src/import_creators.py --file "${{ github.event.inputs.csv_file }}" --group "${{ github.event.inputs.group }}"
