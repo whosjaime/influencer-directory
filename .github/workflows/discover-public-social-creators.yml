@@ -35,9 +35,9 @@ jobs:
     env:
       MONDAY_TOKEN: ${{ secrets.MONDAY_TOKEN }}
       MONDAY_API_KEY: ${{ secrets.MONDAY_API_KEY }}
-      GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
-      GOOGLE_CSE_ID: ${{ secrets.GOOGLE_CSE_ID }}
-      BRAVE_SEARCH_API_KEY: ${{ secrets.BRAVE_SEARCH_API_KEY }}
+      APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
+      APIFY_INSTAGRAM_ACTOR_ID: ${{ secrets.APIFY_INSTAGRAM_ACTOR_ID }}
+      APIFY_TIKTOK_ACTOR_ID: ${{ secrets.APIFY_TIKTOK_ACTOR_ID }}
       MONDAY_BOARD_ID: 18416535896
       MONDAY_DEFAULT_GROUP_ID: group_mm41wfhq
 
@@ -55,7 +55,7 @@ jobs:
 
       - name: Search TikTok first and send to monday
         run: |
-          python src/public_social_discovery.py \
+          python src/apify_social_discovery.py \
             --platform "tiktok" \
             --search "${{ github.event.inputs.search }}" \
             --niche "${{ github.event.inputs.niche }}" \
@@ -66,7 +66,7 @@ jobs:
 
       - name: Search Instagram second and send to monday
         run: |
-          python src/public_social_discovery.py \
+          python src/apify_social_discovery.py \
             --platform "instagram" \
             --search "${{ github.event.inputs.search }}" \
             --niche "${{ github.event.inputs.niche }}" \
