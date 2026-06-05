@@ -6,11 +6,15 @@ on:
       search:
         description: "Search keyword, hashtag, niche, or creator category"
         required: true
-        default: "male comedy skits prank challenge creator"
+        default: "US based male comedy skits prank challenge creator"
       niche:
         description: "monday niche label, like Comedy, Beauty, Fitness, Gaming, Fashion"
         required: false
         default: "Comedy"
+      location:
+        description: "Location tag to apply in monday"
+        required: true
+        default: "United States"
       max_creators_per_platform:
         description: "Maximum creators to add per platform"
         required: true
@@ -55,6 +59,7 @@ jobs:
             --platform "tiktok" \
             --search "${{ github.event.inputs.search }}" \
             --niche "${{ github.event.inputs.niche }}" \
+            --location "${{ github.event.inputs.location }}" \
             --max-creators "${{ github.event.inputs.max_creators_per_platform }}" \
             --creator-gender "${{ github.event.inputs.creator_gender }}" \
             --group "${{ github.event.inputs.group }}"
@@ -65,6 +70,7 @@ jobs:
             --platform "instagram" \
             --search "${{ github.event.inputs.search }}" \
             --niche "${{ github.event.inputs.niche }}" \
+            --location "${{ github.event.inputs.location }}" \
             --max-creators "${{ github.event.inputs.max_creators_per_platform }}" \
             --creator-gender "${{ github.event.inputs.creator_gender }}" \
             --group "${{ github.event.inputs.group }}"
