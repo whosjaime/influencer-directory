@@ -1,0 +1,79 @@
+name: Discover Instagram or TikTok Creators
+
+on:
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: "instagram or tiktok"
+        required: true
+        default: "instagram"
+      search:
+        description: "Search keyword, hashtag, niche, or creator category"
+        required: true
+        default: "beauty creator"
+      niche:
+        description: "monday niche label, like Beauty, Fitness, Gaming, Fashion"
+        required: false
+        default: "Beauty"
+      min_followers:
+        description: "Minimum follower count"
+        required: true
+        default: "10000"
+      max_creators:
+        description: "Maximum creators to add"
+        required: true
+        default: "25"
+      require_email:
+        description: "Only add profiles where public email is found: true or false"
+        required: true
+        default: "false"
+      group:
+        description: "monday group key"
+        required: true
+        default: "new_leads"
+
+jobs:
+  discover-social-creators:
+    runs-on: ubuntu-latest
+
+    env:
+      MONDAY_TOKEN: ${{ secrets.MONDAY_TOKEN }}
+      MONDAY_API_KEY: ${{ secrets.MONDAY_API_KEY }}
+      APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
+      APIFY_INSTAGRAM_ACTOR_ID: ${{ secrets.APIFY_INSTAGRAM_ACTOR_ID }}
+      APIFY_TIKTOK_ACTOR_ID: ${{ secrets.APIFY_TIKTOK_ACTOR_ID }}
+      MONDAY_BOARD_ID: 18416535896
+      MONDAY_DEFAULT_GROUP_ID: group_mm41wfhq
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Discover social creators
+        run: |
+          if [ "${{ github.event.inputs.require_email }}" = "true" ]; then
+            python src/apify_social_discovery.py \
+              --platform "${{ github.event.inputs.platform }}" \
+              --search "${{ github.event.inputs.search }}" \
+              --niche "${{ github.event.inputs.niche }}" \
+              --min-followers "${{ github.event.inputs.min_followers }}" \
+              --max-creators "${{ github.event.inputs.max_creators }}" \
+              --group "${{ github.event.inputs.group }}" \
+              --require-email
+          else
+            python src/apify_social_discovery.py \
+              --platform "${{ github.event.inputs.platform }}" \
+              --search "${{ github.event.inputs.search }}" \
+              --niche "${{ github.event.inputs.niche }}" \
+              --min-followers "${{ github.event.inputs.min_followers }}" \
+              --max-creators "${{ github.event.inputs.max_creators }}" \
+              --group "${{ github.event.inputs.group }}"
+          fi
