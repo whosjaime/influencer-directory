@@ -1,4 +1,4 @@
-name: Discover Public Social Creators No Apify
+name: Run Creator Discovery
 
 on:
   workflow_dispatch:
@@ -29,12 +29,13 @@ on:
         default: "new_leads"
 
 jobs:
-  discover-public-social-creators:
+  run-creator-discovery:
     runs-on: ubuntu-latest
 
     env:
       MONDAY_TOKEN: ${{ secrets.MONDAY_TOKEN }}
       MONDAY_API_KEY: ${{ secrets.MONDAY_API_KEY }}
+      DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
       MONDAY_BOARD_ID: 18416535896
       MONDAY_DEFAULT_GROUP_ID: group_mm41wfhq
 
@@ -50,7 +51,7 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Discover public social creators
+      - name: Run creator discovery and save log
         run: |
           python src/public_social_discovery.py \
             --platform "${{ github.event.inputs.platform }}" \
@@ -58,4 +59,21 @@ jobs:
             --niche "${{ github.event.inputs.niche }}" \
             --max-creators "${{ github.event.inputs.max_creators }}" \
             --creator-gender "${{ github.event.inputs.creator_gender }}" \
-            --group "${{ github.event.inputs.group }}"
+            --group "${{ github.event.inputs.group }}" | tee creator_discovery_log.txt
+
+      - name: Send summary to Discord
+        if: always()
+        run: |
+          if [ -z "$DISCORD_WEBHOOK_URL" ]; then
+            echo "No DISCORD_WEBHOOK_URL secret set. Skipping Discord notification."
+            exit 0
+          fi
+
+          STATUS="${{ job.status }}"
+          SUMMARY=$(tail -n 20 creator_discovery_log.txt | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
+          CONTENT="🎯 Creator discovery finished. Status: $STATUS\nPlatform: ${{ github.event.inputs.platform }}\nSearch: ${{ github.event.inputs.search }}\nNiche: ${{ github.event.inputs.niche }}\nMax creators: ${{ github.event.inputs.max_creators }}\n\nLast log lines:\n$SUMMARY"
+
+          curl -H "Content-Type: application/json" \
+            -X POST \
+            -d "{\"content\": \"$CONTENT\"}" \
+            "$DISCORD_WEBHOOK_URL"
