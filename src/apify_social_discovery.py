@@ -32,10 +32,6 @@ def apify_request(method: str, url: str, **kwargs) -> requests.Response:
 
 
 def build_actor_input(platform: str, search: str, max_results: int) -> dict[str, Any]:
-    """
-    Actor input schemas can vary by actor. These defaults work for common Apify actors,
-    but you can override the actor ID with APIFY_INSTAGRAM_ACTOR_ID or APIFY_TIKTOK_ACTOR_ID.
-    """
     platform = platform.lower().strip()
 
     if platform == "instagram":
@@ -137,7 +133,7 @@ def normalize_profile_url(platform: str, handle: str, url: str = "") -> str:
     return ""
 
 
-def item_to_creator(item: dict[str, Any], platform: str, niche: str, search: str) -> dict[str, str]:
+def item_to_creator(item: dict[str, Any], platform: str, niche: str, search: str, creator_gender: str = "Unknown") -> dict[str, str]:
     platform = platform.lower().strip()
     platform_label = "Instagram" if platform == "instagram" else "TikTok"
 
@@ -173,7 +169,7 @@ def item_to_creator(item: dict[str, Any], platform: str, niche: str, search: str
         "country": str(country or "Unknown"),
         "niche": niche or search,
         "creator_type": "Individual Creator",
-        "creator_gender": "Unknown",
+        "creator_gender": creator_gender,
         "outreach_status": "Not Contacted",
         "tier": "Not Yet Tiered",
         "headhunter": "Unassigned",
@@ -189,8 +185,8 @@ def discover_social_creators(
     niche: str = "",
     max_creators: int = 25,
     min_followers: int = 0,
-    require_email: bool = False,
     group_key: str = "new_leads",
+    creator_gender: str = "Unknown",
 ) -> None:
     platform = platform.lower().strip()
     if platform not in ["instagram", "tiktok"]:
@@ -204,7 +200,7 @@ def discover_social_creators(
     created_count = 0
 
     for item in items:
-        creator = item_to_creator(item, platform=platform, niche=niche, search=search)
+        creator = item_to_creator(item, platform=platform, niche=niche, search=search, creator_gender=creator_gender)
         followers_raw = creator.get("followers") or "0"
 
         try:
@@ -214,8 +210,6 @@ def discover_social_creators(
 
         if followers < min_followers:
             continue
-        if require_email and not creator.get("public_email"):
-            continue
         if not creator.get("handle") and not creator.get("creator_name"):
             continue
 
@@ -224,7 +218,7 @@ def discover_social_creators(
             item_result = result["data"]["create_item"]
             print(
                 f"Created: {item_result['name']} / {creator['platform']} / "
-                f"{creator['followers']} followers / email: {creator['public_email'] or 'none'}"
+                f"{creator['followers']} followers / email: {creator['public_email'] or 'blank'}"
             )
             created_count += 1
         except Exception as error:
@@ -240,8 +234,8 @@ if __name__ == "__main__":
     parser.add_argument("--niche", default="", help="monday niche label, like Beauty, Fitness, Gaming, Fashion")
     parser.add_argument("--max-creators", type=int, default=25, help="Maximum creators to add")
     parser.add_argument("--min-followers", type=int, default=0, help="Minimum follower count")
-    parser.add_argument("--require-email", action="store_true", help="Only add profiles where a public email is found")
     parser.add_argument("--group", default="new_leads", help="monday group key")
+    parser.add_argument("--creator-gender", default="Unknown", choices=["Woman", "Man", "Non-binary", "Mixed Team", "Unknown"], help="Gender tag to apply to this search batch")
 
     args = parser.parse_args()
 
@@ -251,6 +245,6 @@ if __name__ == "__main__":
         niche=args.niche,
         max_creators=args.max_creators,
         min_followers=args.min_followers,
-        require_email=args.require_email,
         group_key=args.group,
+        creator_gender=args.creator_gender,
     )
