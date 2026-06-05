@@ -1,7 +1,241 @@
+# Do Not Scrape / Do Not Add
 # Add one handle, name, email, domain, or profile URL per line.
 # Lines starting with # are ignored.
-# Examples:
-# @examplecreator
-# https://www.instagram.com/examplecreator/
-# example@email.com
-# example.com
+# Imported from: SR Sticki Crew Creator Recruitment.xlsx
+# Purpose: skip creators already contacted/reviewed for Sticki Crew recruitment.
+
+@aidan.aws
+@andrew_mckenna
+@andreww_mckenna
+@armaan.t
+@armaant
+@ashtonherndon
+@ashtonherndonn
+@ben_reid_
+@bradendaily
+@bradendaily_
+@bryantgavello
+@byefarzy
+@cadenscoots
+@cameronrohpovs
+@cedric_pham
+@cedricpham
+@coopermitcchell
+@crubtv
+@davidona0
+@davidswagapino
+@dentaldigest
+@dimucc
+@dnzioplus
+@dnzioyt
+@f.r3n
+@grantcwills
+@haven.lough
+@havenlough
+@heyitsaidan
+@itsbenreid
+@itsdimucc
+@izaiah.schmidt
+@izaiahschmidtyt
+@jasonolofsen
+@jaxsongauntt
+@jerzboys
+@jerzboys_
+@joelhxll
+@joelvalmedia
+@kaneljoseph
+@kellywakasa
+@kelwak
+@kjs_skits
+@kyle.ciauri
+@kyleciauri
+@kylekrueger
+@kylekruegerr
+@kylezhengg
+@kylezhenggg
+@lifewfarzy
+@mackharrisonn
+@matthewables
+@micsterman
+@parthkotechaa
+@phil.leee
+@pierocgrieco
+@pierogrieco
+@rohabits
+@rohabits12
+@snupy
+@snupy11
+@snupytv
+@tedrush
+@thebrok
+@thehxddy
+@themichaelsilk
+@trentiin
+@trentinvuong
+@uriahshorts
+@vichrome
+@wakasi
+@whiskeybearthelab
+@whiteboy.william
+@xenoicxavier
+Anthony Baroud
+Caden Scoot
+Cameron Roh
+Cedrick Pham
+Derreck Leong
+Kanel Joseph
+Kyle Krueger
+Kyle Sorensen
+Kyle Zheng
+Mack Harrison
+Matthew Ables
+Micah Featherson
+Michael Silk
+Phil Lee
+Thicrhis & Drew
+Uriah Shorts
+aidan@sparksocialglobal.com
+aidan@tiddle.io
+apmckenna205@gmail.com
+art@wakasi.com
+benreidbiz@gmail.com
+bgavello20@gmail.com
+brokbresser@currentsmgmt.com
+cadenscoots@undercurrent.net
+cadenscootsbiz@gmail.com
+cameronrohbiz@gmail.com
+cedric.pham@cycle.media
+chatwithcoop@gmail.com
+darkest.dnzio@gmail.com
+davidona828@gmail.com
+dentaldigest@wearetrival.com
+diomi@101entertainment.co
+feathersonmicah@gmail.com
+gizzibrosproductions@gmail.com
+haven@clementinegroup.co
+https://instagram.com/aidan.aws
+https://instagram.com/jaxsongauntt
+https://instagram.com/kylekruegerr
+https://instagram.com/parthkotechaa
+https://instagram.com/thebrok/
+https://instagram.com/trentinvuong
+https://tiktok.com/@jaxsongauntt
+https://tiktok.com/@kylekruegerr
+https://tiktok.com/@snupytv
+https://vm.tiktok.com/q53KK7
+https://www.instagram.com/andreww_mckenna/
+https://www.instagram.com/armaant/
+https://www.instagram.com/ben_reid_
+https://www.instagram.com/bradendaily_
+https://www.instagram.com/bryantgavello/
+https://www.instagram.com/coopermitcchell/
+https://www.instagram.com/davidona0/
+https://www.instagram.com/f.r3n
+https://www.instagram.com/grantcwills/
+https://www.instagram.com/haven.lough/
+https://www.instagram.com/itsdimucc/
+https://www.instagram.com/jerzboys_/reels/
+https://www.instagram.com/kaneljoseph
+https://www.instagram.com/kellywakasa/reels/
+https://www.instagram.com/kyle.ciauri
+https://www.instagram.com/lifewfarzy/reels/
+https://www.instagram.com/micsterman/reels/
+https://www.instagram.com/phil.leee/
+https://www.instagram.com/pierocgrieco/
+https://www.instagram.com/rohabits
+https://www.instagram.com/snupy11/
+https://www.instagram.com/thehxddy
+https://www.instagram.com/uriahshorts/
+https://www.instagram.com/vichrome/
+https://www.instagram.com/wakasi/reels/
+https://www.instagram.com/whiteboy.william/
+https://www.instagram.com/xenoicxavier/reels/
+https://www.tiktok.com/@andreww_mckenna
+https://www.tiktok.com/@armaan.t
+https://www.tiktok.com/@ashtonherndon
+https://www.tiktok.com/@bradendaily
+https://www.tiktok.com/@bryantgavello
+https://www.tiktok.com/@coopermitcchell
+https://www.tiktok.com/@crubtv
+https://www.tiktok.com/@davidswagapino
+https://www.tiktok.com/@dimucc
+https://www.tiktok.com/@dnzioyt
+https://www.tiktok.com/@haven.lough
+https://www.tiktok.com/@itsbenreid
+https://www.tiktok.com/@izaiah.schmidt
+https://www.tiktok.com/@kelwak
+https://www.tiktok.com/@kyle.ciauri
+https://www.tiktok.com/@kylekrueger
+https://www.tiktok.com/@kylezhenggg
+https://www.tiktok.com/@lifewfarzy%EF%BF%BC
+https://www.tiktok.com/@mackharrisonn
+https://www.tiktok.com/@phil.leee
+https://www.tiktok.com/@pierogrieco
+https://www.tiktok.com/@rohabits
+https://www.tiktok.com/@thehxddy
+https://www.tiktok.com/@trentiin
+https://www.tiktok.com/@uriahshorts
+https://www.tiktok.com/@whiskeybearthelab
+https://www.tiktok.com/@xenoicxavier
+https://www.youtube.com/@Dimucc
+https://www.youtube.com/@IzaiahSchmidtyt
+https://www.youtube.com/@Jasonolofsen
+https://www.youtube.com/@KanelJoseph
+https://www.youtube.com/@KellyWakasa
+https://www.youtube.com/@KyleKrueger/shorts
+https://www.youtube.com/@Kyleciauri
+https://www.youtube.com/@PieroGrieco
+https://www.youtube.com/@TedRush/shorts
+https://www.youtube.com/@TrentinVuong
+https://www.youtube.com/@UriahShorts
+https://www.youtube.com/@andrew_mckenna
+https://www.youtube.com/@armaan.t
+https://www.youtube.com/@ashtonherndon
+https://www.youtube.com/@byefarzy
+https://www.youtube.com/@cedricpham
+https://www.youtube.com/@coopermitcchell
+https://www.youtube.com/@dnzioplus/shorts
+https://www.youtube.com/@havenlough
+https://www.youtube.com/@heyitsaidan
+https://www.youtube.com/@jaxsongauntt
+https://www.youtube.com/@joelhxll
+https://www.youtube.com/@parthkotechaa
+https://www.youtube.com/@rohabits12
+https://www.youtube.com/@snupy
+https://www.youtube.com/@thebrok
+https://www.youtube.com/@thehxddy
+https://www.youtube.com/@vichrome
+https://www.youtube.com/@xenoicxavier/shorts
+https://www.youtube.com/c/crubtvyoutube
+https://www.youtube.com/channel/UC0qhopFVnIjMjryFGobZihw
+https://www.youtube.com/channel/UCKcsCnv65H_Mb-_NbajwfzA
+https://www.youtube.com/channel/UCPldpzxANLoUky17SJYLGLw
+https://www.youtube.com/channel/UCUvJv-8E23SfDLOUW0SxkbA
+https://www.youtube.com/grantcwills
+hxddybusiness@gmail.com
+ikram@outreachtalentgroup.com
+izaiah@tiddle.io
+jaxsongaunttbusiness@gmail.com
+jerzboys22@gmail.com
+joelvhollingsworth@gmail.com
+kanel@properloud.com
+kelly@team-hyphen.com
+kyle@clementinegroup.co
+kylekruegerbiz@gmail.com
+kylezhengcontact@gmail.com
+mackfailingprojects@gmail.com
+mackharrisonprojects@gmail.com
+matthew@ninefourent.com
+max@grail-talent.com
+mgmt@dimucctv.com
+michaeljsilkk@gmail.com
+parthkotecha2@gmail.com
+partnerships@grantcwills.com
+phil@theviralistgroup.com
+pierogriecomgmt@gmail.com
+rohansharma5182@gmail.com
+support@jasonolofsen.net
+tedrushteam@gmail.com
+trentin@vitalinfluence.com
+whiskeybearthelab@gmail.com
+willworks17@gmail.com
