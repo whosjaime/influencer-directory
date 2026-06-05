@@ -6,11 +6,11 @@ on:
       search:
         description: "Search keyword, hashtag, niche, or creator category"
         required: true
-        default: "US based male comedy skits prank challenge creator"
+        default: "US based entertainment comedy skits pranks challenges happy energetic creator"
       niche:
-        description: "monday niche label, like Comedy, Beauty, Fitness, Gaming, Fashion"
+        description: "monday niche label"
         required: false
-        default: "Comedy"
+        default: "Entertainment"
       location:
         description: "Location tag to apply in monday"
         required: true
@@ -20,7 +20,7 @@ on:
         required: true
         default: "100"
       creator_gender:
-        description: "Gender tag to apply to this search batch: Woman, Man, Non-binary, Mixed Team, or Unknown"
+        description: "Gender tag to apply to this search batch"
         required: true
         default: "Man"
       group:
