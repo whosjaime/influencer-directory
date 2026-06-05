@@ -16,7 +16,7 @@ from monday_client import create_creator_item, get_existing_creator_keys, GROUP_
 load_dotenv()
 
 HEADERS = {
-    "User-Agent": "Mozilla/5.0 (compatible; ManifestMediaLeadResearch/1.0; +https://github.com/whosjaime/influencer-directory)",
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0 Safari/537.36",
     "Accept-Language": "en-US,en;q=0.9",
 }
 
@@ -27,12 +27,32 @@ SOCIAL_PATTERNS = {
 
 BAD_PATH_PARTS = {
     "instagram": {"p", "reel", "reels", "stories", "explore", "accounts", "about", "developer", "directory"},
-    "tiktok": {"tag", "music", "discover", "channel", "following", "live"},
+    "tiktok": {"tag", "music", "discover", "channel", "following", "live", "login", "signup"},
+}
+
+DEFAULT_PLATFORM_SEEDS = {
+    "tiktok": [
+        "site:tiktok.com/@ comedy creator",
+        "site:tiktok.com/@ funny skits",
+        "site:tiktok.com/@ prank creator",
+        "site:tiktok.com/@ street interview creator",
+        "site:tiktok.com/@ social experiment creator",
+    ],
+    "instagram": [
+        "site:instagram.com comedy creator",
+        "site:instagram.com funny skits",
+        "site:instagram.com prank creator",
+        "site:instagram.com street interview creator",
+        "site:instagram.com social experiment creator",
+    ],
 }
 
 
 def http_get(url: str, timeout: int = 25) -> str:
-    response = requests.get(url, headers=HEADERS, timeout=timeout)
+    try:
+        response = requests.get(url, headers=HEADERS, timeout=timeout)
+    except Exception:
+        return ""
     if response.status_code >= 400:
         return ""
     return response.text or ""
@@ -43,6 +63,15 @@ def unwrap_duckduckgo_url(url: str) -> str:
     query = parse_qs(parsed.query)
     if "uddg" in query:
         return unquote(query["uddg"][0])
+    return url
+
+
+def unwrap_bing_url(url: str) -> str:
+    if url.startswith("/ck/a"):
+        parsed = urlparse(url)
+        query = parse_qs(parsed.query)
+        if "u" in query:
+            return unquote(query["u"][0])
     return url
 
 
@@ -66,6 +95,7 @@ def is_valid_profile_url(platform: str, url: str) -> bool:
 
 
 def normalize_profile_url(platform: str, url: str) -> str:
+    url = html.unescape(url)
     url = url.split("?")[0].split("#")[0].rstrip("/")
     parsed = urlparse(url)
     path = parsed.path.strip("/")
@@ -90,35 +120,56 @@ def extract_handle(platform: str, profile_url: str) -> str:
     return handle if handle.startswith("@") else f"@{handle}"
 
 
-def search_duckduckgo(platform: str, search: str, max_results: int) -> list[str]:
-    site = "instagram.com" if platform == "instagram" else "tiktok.com/@"
-    query = f"site:{site} {search}"
-    url = f"https://duckduckgo.com/html/?q={quote_plus(query)}"
-    html_text = http_get(url)
-    if not html_text:
-        return []
+def extract_social_urls(platform: str, html_text: str, max_results: int, existing: list[str] | None = None) -> list[str]:
+    html_text = html.unescape(html_text or "")
+    candidates = existing or []
 
-    html_text = html.unescape(html_text)
-    candidates = []
+    hrefs = re.findall(r'href=["\']([^"\']+)["\']', html_text)
+    all_texts = hrefs + [html_text]
 
-    for href in re.findall(r'href="([^"]+)"', html_text):
-        href = unwrap_duckduckgo_url(href)
-        for match in SOCIAL_PATTERNS[platform].findall(href):
+    for raw in all_texts:
+        raw = unwrap_duckduckgo_url(unwrap_bing_url(raw))
+        raw = unquote(raw)
+        for match in SOCIAL_PATTERNS[platform].findall(raw):
             normalized = normalize_profile_url(platform, match)
             if is_valid_profile_url(platform, normalized) and normalized not in candidates:
                 candidates.append(normalized)
                 if len(candidates) >= max_results:
                     return candidates
 
-    # Fallback: scan full HTML text for social URLs.
-    for match in SOCIAL_PATTERNS[platform].findall(html_text):
-        normalized = normalize_profile_url(platform, match)
-        if is_valid_profile_url(platform, normalized) and normalized not in candidates:
-            candidates.append(normalized)
-            if len(candidates) >= max_results:
-                break
-
     return candidates
+
+
+def search_duckduckgo(platform: str, query: str, max_results: int, existing: list[str] | None = None) -> list[str]:
+    url = f"https://duckduckgo.com/html/?q={quote_plus(query)}"
+    return extract_social_urls(platform, http_get(url), max_results, existing)
+
+
+def search_bing(platform: str, query: str, max_results: int, existing: list[str] | None = None) -> list[str]:
+    url = f"https://www.bing.com/search?q={quote_plus(query)}&count=50"
+    return extract_social_urls(platform, http_get(url), max_results, existing)
+
+
+def search_public_web(platform: str, search: str, max_results: int) -> list[str]:
+    site = "site:instagram.com" if platform == "instagram" else "site:tiktok.com/@"
+    queries = [
+        f"{site} {search}",
+        f"{site} {search} influencer",
+        f"{site} {search} creator",
+    ]
+    queries.extend(DEFAULT_PLATFORM_SEEDS.get(platform, []))
+
+    candidates: list[str] = []
+    for query in queries:
+        before = len(candidates)
+        candidates = search_bing(platform, query, max_results, candidates)
+        candidates = search_duckduckgo(platform, query, max_results, candidates)
+        print(f"Search query: {query} / found {len(candidates) - before} new profiles")
+        if len(candidates) >= max_results:
+            break
+        time.sleep(0.5)
+
+    return candidates[:max_results]
 
 
 def extract_meta_description(html_text: str) -> str:
@@ -220,7 +271,7 @@ def discover_public_social_creators(
     existing_keys = get_existing_creator_keys()
     run_keys = set()
 
-    urls = search_duckduckgo(platform, search, max_creators)
+    urls = search_public_web(platform, search, max_creators)
     print(f"Found {len(urls)} candidate {platform} profile URLs for search: {search}")
 
     created_count = 0
