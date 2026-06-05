@@ -18,7 +18,7 @@ def extract_emails(text: str) -> list[str]:
     cleaned = []
 
     for email in found:
-        email = email.strip().lower().rstrip(".,;:)"])
+        email = email.strip().lower().rstrip(".,;:)]}")
         if any(bad in email for bad in BAD_EMAIL_KEYWORDS):
             continue
         if email not in cleaned:
