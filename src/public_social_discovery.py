@@ -1,5 +1,6 @@
 import argparse
 import html
+import os
 import re
 import time
 from datetime import date
@@ -14,6 +15,8 @@ from email_utils import first_email
 from monday_client import create_creator_item, get_existing_creator_keys, GROUP_IDS
 
 load_dotenv()
+
+BRAVE_SEARCH_API_KEY = os.getenv("BRAVE_SEARCH_API_KEY")
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0 Safari/537.36",
@@ -120,6 +123,16 @@ def extract_handle(platform: str, profile_url: str) -> str:
     return handle if handle.startswith("@") else f"@{handle}"
 
 
+def add_social_url(platform: str, raw_url: str, candidates: list[str], max_results: int) -> list[str]:
+    for match in SOCIAL_PATTERNS[platform].findall(raw_url or ""):
+        normalized = normalize_profile_url(platform, match)
+        if is_valid_profile_url(platform, normalized) and normalized not in candidates:
+            candidates.append(normalized)
+            if len(candidates) >= max_results:
+                return candidates
+    return candidates
+
+
 def extract_social_urls(platform: str, html_text: str, max_results: int, existing: list[str] | None = None) -> list[str]:
     html_text = html.unescape(html_text or "")
     candidates = existing or []
@@ -130,10 +143,41 @@ def extract_social_urls(platform: str, html_text: str, max_results: int, existin
     for raw in all_texts:
         raw = unwrap_duckduckgo_url(unwrap_bing_url(raw))
         raw = unquote(raw)
-        for match in SOCIAL_PATTERNS[platform].findall(raw):
-            normalized = normalize_profile_url(platform, match)
-            if is_valid_profile_url(platform, normalized) and normalized not in candidates:
-                candidates.append(normalized)
+        candidates = add_social_url(platform, raw, candidates, max_results)
+        if len(candidates) >= max_results:
+            return candidates
+
+    return candidates
+
+
+def search_brave(platform: str, query: str, max_results: int, existing: list[str] | None = None) -> list[str]:
+    candidates = existing or []
+    if not BRAVE_SEARCH_API_KEY:
+        return candidates
+
+    headers = {
+        "Accept": "application/json",
+        "X-Subscription-Token": BRAVE_SEARCH_API_KEY,
+    }
+
+    for offset in [0, 20, 40]:
+        if len(candidates) >= max_results:
+            break
+        params = {"q": query, "count": 20, "offset": offset}
+        try:
+            response = requests.get("https://api.search.brave.com/res/v1/web/search", headers=headers, params=params, timeout=30)
+            data = response.json()
+        except Exception as error:
+            print(f"Brave search failed for query {query}: {error}")
+            break
+
+        if response.status_code >= 400:
+            print(f"Brave search API error {response.status_code}: {data}")
+            break
+
+        for result in data.get("web", {}).get("results", []):
+            for field in ["url", "description", "title"]:
+                candidates = add_social_url(platform, result.get(field, ""), candidates, max_results)
                 if len(candidates) >= max_results:
                     return candidates
 
@@ -159,11 +203,18 @@ def search_public_web(platform: str, search: str, max_results: int) -> list[str]
     ]
     queries.extend(DEFAULT_PLATFORM_SEEDS.get(platform, []))
 
+    if BRAVE_SEARCH_API_KEY:
+        print("Using Brave Search API for profile discovery.")
+    else:
+        print("No BRAVE_SEARCH_API_KEY found. Using free HTML search fallback, which may return 0 on GitHub runners.")
+
     candidates: list[str] = []
     for query in queries:
         before = len(candidates)
-        candidates = search_bing(platform, query, max_results, candidates)
-        candidates = search_duckduckgo(platform, query, max_results, candidates)
+        candidates = search_brave(platform, query, max_results, candidates)
+        if not BRAVE_SEARCH_API_KEY:
+            candidates = search_bing(platform, query, max_results, candidates)
+            candidates = search_duckduckgo(platform, query, max_results, candidates)
         print(f"Search query: {query} / found {len(candidates) - before} new profiles")
         if len(candidates) >= max_results:
             break
