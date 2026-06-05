@@ -24,12 +24,11 @@ DEFAULT_ACTORS = {
 
 def apify_request(method: str, url: str, **kwargs) -> requests.Response:
     if not APIFY_TOKEN:
-        raise ValueError("Missing APIFY_TOKEN. Add it to your .env file or GitHub Secrets.")
+        raise ValueError("Missing APIFY_TOKEN. Add it to your GitHub Secrets.")
 
     params = kwargs.pop("params", {}) or {}
     params["token"] = APIFY_TOKEN
-    response = requests.request(method, url, params=params, timeout=120, **kwargs)
-    return response
+    return requests.request(method, url, params=params, timeout=120, **kwargs)
 
 
 def build_actor_input(platform: str, search: str, max_results: int) -> dict[str, Any]:
@@ -122,11 +121,9 @@ def number_to_string(value: Any) -> str:
 def normalize_profile_url(platform: str, handle: str, url: str = "") -> str:
     if url:
         return url
-
     clean_handle = handle.lstrip("@")
     if not clean_handle:
         return ""
-
     if platform == "instagram":
         return f"https://www.instagram.com/{clean_handle}/"
     if platform == "tiktok":
@@ -134,7 +131,7 @@ def normalize_profile_url(platform: str, handle: str, url: str = "") -> str:
     return ""
 
 
-def item_to_creator(item: dict[str, Any], platform: str, niche: str, search: str, creator_gender: str = "Unknown") -> dict[str, str]:
+def item_to_creator(item: dict[str, Any], platform: str, niche: str, search: str, creator_gender: str, location_tag: str) -> dict[str, str]:
     platform = platform.lower().strip()
     platform_label = "Instagram" if platform == "instagram" else "TikTok"
 
@@ -147,8 +144,8 @@ def item_to_creator(item: dict[str, Any], platform: str, niche: str, search: str
     followers = first_available(item, ["followersCount", "followerCount", "fans", "authorMeta.fans", "subscribers"], "")
     profile_url = first_available(item, ["url", "profileUrl", "webVideoUrl", "authorMeta.profileUrl"], "")
     public_email = first_available(item, ["email", "publicEmail", "businessEmail"], "") or first_email(str(bio))
-    location = first_available(item, ["location", "city", "country", "region"], "")
-    country = first_available(item, ["country", "region"], "Unknown")
+    location = first_available(item, ["location", "city", "country", "region"], "") or location_tag
+    country = "United States" if "united states" in str(location_tag).lower() else first_available(item, ["country", "region"], "Unknown")
 
     handle = str(username or "").strip()
     if handle and not handle.startswith("@"):
@@ -166,7 +163,7 @@ def item_to_creator(item: dict[str, Any], platform: str, niche: str, search: str
         "followers": number_to_string(followers),
         "engagement_rate": "",
         "bio": str(bio or "")[:1800],
-        "location": str(location or ""),
+        "location": str(location or location_tag),
         "country": str(country or "Unknown"),
         "niche": niche or search,
         "creator_type": "Individual Creator",
@@ -187,11 +184,12 @@ def has_duplicate_key(creator: dict, existing_keys: set[str]) -> bool:
 def discover_social_creators(
     platform: str,
     search: str,
-    niche: str = "",
+    niche: str = "Entertainment",
     max_creators: int = 100,
     min_followers: int = 0,
     group_key: str = "new_leads",
-    creator_gender: str = "Unknown",
+    creator_gender: str = "Man",
+    location: str = "United States",
 ) -> None:
     platform = platform.lower().strip()
     if platform not in ["instagram", "tiktok"]:
@@ -211,7 +209,14 @@ def discover_social_creators(
     skipped_blocked = 0
 
     for item in items:
-        creator = item_to_creator(item, platform=platform, niche=niche, search=search, creator_gender=creator_gender)
+        creator = item_to_creator(
+            item,
+            platform=platform,
+            niche=niche,
+            search=search,
+            creator_gender=creator_gender,
+            location_tag=location,
+        )
         current_keys = creator_keys(creator)
         followers_raw = creator.get("followers") or "0"
 
@@ -262,11 +267,12 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Discover Instagram or TikTok creators through Apify and send them to monday.com.")
     parser.add_argument("--platform", required=True, choices=["instagram", "tiktok"], help="instagram or tiktok")
     parser.add_argument("--search", required=True, help="Search keyword, hashtag, niche, or creator category")
-    parser.add_argument("--niche", default="", help="monday niche label, like Beauty, Fitness, Gaming, Fashion")
+    parser.add_argument("--niche", default="Entertainment", help="monday niche label")
+    parser.add_argument("--location", default="United States", help="Location tag to apply in monday")
     parser.add_argument("--max-creators", type=int, default=100, help="Maximum creators to add")
     parser.add_argument("--min-followers", type=int, default=0, help="Minimum follower count")
     parser.add_argument("--group", default="new_leads", help="monday group key")
-    parser.add_argument("--creator-gender", default="Unknown", choices=["Woman", "Man", "Non-binary", "Mixed Team", "Unknown"], help="Gender tag to apply to this search batch")
+    parser.add_argument("--creator-gender", default="Man", choices=["Woman", "Man", "Non-binary", "Mixed Team", "Unknown"], help="Gender tag to apply to this search batch")
 
     args = parser.parse_args()
 
@@ -278,4 +284,5 @@ if __name__ == "__main__":
         min_followers=args.min_followers,
         group_key=args.group,
         creator_gender=args.creator_gender,
+        location=args.location,
     )
