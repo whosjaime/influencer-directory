@@ -6,7 +6,7 @@ on:
       search:
         description: "Search keyword, hashtag, niche, or creator category"
         required: true
-        default: "comedy skits creator"
+        default: "male comedy skits prank challenge creator"
       niche:
         description: "monday niche label, like Comedy, Beauty, Fitness, Gaming, Fashion"
         required: false
@@ -18,7 +18,7 @@ on:
       creator_gender:
         description: "Gender tag to apply to this search batch: Woman, Man, Non-binary, Mixed Team, or Unknown"
         required: true
-        default: "Unknown"
+        default: "Man"
       group:
         description: "monday group key"
         required: true
@@ -31,6 +31,9 @@ jobs:
     env:
       MONDAY_TOKEN: ${{ secrets.MONDAY_TOKEN }}
       MONDAY_API_KEY: ${{ secrets.MONDAY_API_KEY }}
+      GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+      GOOGLE_CSE_ID: ${{ secrets.GOOGLE_CSE_ID }}
+      BRAVE_SEARCH_API_KEY: ${{ secrets.BRAVE_SEARCH_API_KEY }}
       MONDAY_BOARD_ID: 18416535896
       MONDAY_DEFAULT_GROUP_ID: group_mm41wfhq
 
