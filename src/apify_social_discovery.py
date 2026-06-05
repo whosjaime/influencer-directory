@@ -7,6 +7,7 @@ from typing import Any
 import requests
 from dotenv import load_dotenv
 
+from dedupe_utils import dedupe_key, is_blocked_creator, load_blocklist
 from email_utils import first_email
 from monday_client import create_creator_item, GROUP_IDS
 
@@ -183,7 +184,7 @@ def discover_social_creators(
     platform: str,
     search: str,
     niche: str = "",
-    max_creators: int = 25,
+    max_creators: int = 100,
     min_followers: int = 0,
     group_key: str = "new_leads",
     creator_gender: str = "Unknown",
@@ -196,11 +197,16 @@ def discover_social_creators(
     if not group_id:
         raise ValueError(f"Invalid group key: {group_key}")
 
+    blocklist = load_blocklist()
+    seen_keys = set()
     items = run_actor(platform=platform, search=search, max_results=max_creators)
     created_count = 0
+    skipped_duplicates = 0
+    skipped_blocked = 0
 
     for item in items:
         creator = item_to_creator(item, platform=platform, niche=niche, search=search, creator_gender=creator_gender)
+        creator_key = dedupe_key(creator)
         followers_raw = creator.get("followers") or "0"
 
         try:
@@ -212,6 +218,16 @@ def discover_social_creators(
             continue
         if not creator.get("handle") and not creator.get("creator_name"):
             continue
+        if is_blocked_creator(creator, blocklist):
+            skipped_blocked += 1
+            print(f"Skipped blocklisted creator: {creator.get('creator_name')} / {creator.get('handle')}")
+            continue
+        if creator_key in seen_keys:
+            skipped_duplicates += 1
+            print(f"Skipped duplicate from this run: {creator.get('creator_name')} / {creator.get('handle')}")
+            continue
+
+        seen_keys.add(creator_key)
 
         try:
             result = create_creator_item(creator, group_id=group_id)
@@ -224,7 +240,10 @@ def discover_social_creators(
         except Exception as error:
             print(f"Failed creator: {creator.get('creator_name')} / error: {error}")
 
-    print(f"Done. Created {created_count} {platform} creator leads for search: {search}")
+    print(
+        f"Done. Created {created_count} {platform} creator leads for search: {search}. "
+        f"Skipped {skipped_duplicates} duplicates and {skipped_blocked} blocklisted creators."
+    )
 
 
 if __name__ == "__main__":
@@ -232,7 +251,7 @@ if __name__ == "__main__":
     parser.add_argument("--platform", required=True, choices=["instagram", "tiktok"], help="instagram or tiktok")
     parser.add_argument("--search", required=True, help="Search keyword, hashtag, niche, or creator category")
     parser.add_argument("--niche", default="", help="monday niche label, like Beauty, Fitness, Gaming, Fashion")
-    parser.add_argument("--max-creators", type=int, default=25, help="Maximum creators to add")
+    parser.add_argument("--max-creators", type=int, default=100, help="Maximum creators to add")
     parser.add_argument("--min-followers", type=int, default=0, help="Minimum follower count")
     parser.add_argument("--group", default="new_leads", help="monday group key")
     parser.add_argument("--creator-gender", default="Unknown", choices=["Woman", "Man", "Non-binary", "Mixed Team", "Unknown"], help="Gender tag to apply to this search batch")
