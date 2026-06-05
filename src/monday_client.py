@@ -126,6 +126,54 @@ def build_creator_column_values(creator: dict) -> dict:
     return clean_column_values(values)
 
 
+def get_existing_creator_keys() -> set[str]:
+    from dedupe_utils import creator_keys
+
+    query = """
+    query ExistingCreators($board_id: ID!) {
+      boards(ids: [$board_id]) {
+        items_page(limit: 500) {
+          items {
+            id
+            name
+            column_values(ids: ["text_mm41z276", "email_mm41zs1s", "link_mm417svc", "text_mm41bddw", "dropdown_mm41fn22"]) {
+              id
+              text
+              value
+            }
+          }
+        }
+      }
+    }
+    """
+
+    data = monday_request(query, {"board_id": MONDAY_BOARD_ID})
+    items = data.get("data", {}).get("boards", [{}])[0].get("items_page", {}).get("items", [])
+
+    existing_keys = set()
+    for item in items:
+        creator = {"name": item.get("name", "")}
+
+        for column in item.get("column_values", []):
+            column_id = column.get("id")
+            text = column.get("text") or ""
+
+            if column_id == COLUMN_IDS["handle"]:
+                creator["handle"] = text
+            elif column_id == COLUMN_IDS["public_email"]:
+                creator["public_email"] = text
+            elif column_id == COLUMN_IDS["profile_url"]:
+                creator["profile_url"] = text
+            elif column_id == COLUMN_IDS["creator_name"]:
+                creator["creator_name"] = text
+            elif column_id == COLUMN_IDS["platform"]:
+                creator["platform"] = text
+
+        existing_keys.update(creator_keys(creator))
+
+    return existing_keys
+
+
 def create_creator_item(creator: dict, group_id: str = MONDAY_DEFAULT_GROUP_ID) -> dict:
     item_name = creator.get("name") or creator.get("creator_name") or creator.get("handle")
 
