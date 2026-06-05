@@ -1,0 +1,7 @@
+# Add one handle, name, email, domain, or profile URL per line.
+# Lines starting with # are ignored.
+# Examples:
+# @examplecreator
+# https://www.instagram.com/examplecreator/
+# example@email.com
+# example.com
