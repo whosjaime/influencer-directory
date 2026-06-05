@@ -7,9 +7,9 @@ from typing import Any
 import requests
 from dotenv import load_dotenv
 
-from dedupe_utils import dedupe_key, is_blocked_creator, load_blocklist
+from dedupe_utils import creator_keys, is_blocked_creator, load_blocklist
 from email_utils import first_email
-from monday_client import create_creator_item, GROUP_IDS
+from monday_client import create_creator_item, get_existing_creator_keys, GROUP_IDS
 
 load_dotenv()
 
@@ -180,6 +180,10 @@ def item_to_creator(item: dict[str, Any], platform: str, niche: str, search: str
     }
 
 
+def has_duplicate_key(creator: dict, existing_keys: set[str]) -> bool:
+    return any(key in existing_keys for key in creator_keys(creator))
+
+
 def discover_social_creators(
     platform: str,
     search: str,
@@ -198,15 +202,17 @@ def discover_social_creators(
         raise ValueError(f"Invalid group key: {group_key}")
 
     blocklist = load_blocklist()
-    seen_keys = set()
+    existing_keys = get_existing_creator_keys()
+    run_keys = set()
     items = run_actor(platform=platform, search=search, max_results=max_creators)
     created_count = 0
     skipped_duplicates = 0
+    skipped_existing = 0
     skipped_blocked = 0
 
     for item in items:
         creator = item_to_creator(item, platform=platform, niche=niche, search=search, creator_gender=creator_gender)
-        creator_key = dedupe_key(creator)
+        current_keys = creator_keys(creator)
         followers_raw = creator.get("followers") or "0"
 
         try:
@@ -222,12 +228,17 @@ def discover_social_creators(
             skipped_blocked += 1
             print(f"Skipped blocklisted creator: {creator.get('creator_name')} / {creator.get('handle')}")
             continue
-        if creator_key in seen_keys:
+        if any(key in run_keys for key in current_keys):
             skipped_duplicates += 1
             print(f"Skipped duplicate from this run: {creator.get('creator_name')} / {creator.get('handle')}")
             continue
+        if has_duplicate_key(creator, existing_keys):
+            skipped_existing += 1
+            print(f"Skipped existing monday creator: {creator.get('creator_name')} / {creator.get('handle')}")
+            continue
 
-        seen_keys.add(creator_key)
+        run_keys.update(current_keys)
+        existing_keys.update(current_keys)
 
         try:
             result = create_creator_item(creator, group_id=group_id)
@@ -242,7 +253,8 @@ def discover_social_creators(
 
     print(
         f"Done. Created {created_count} {platform} creator leads for search: {search}. "
-        f"Skipped {skipped_duplicates} duplicates and {skipped_blocked} blocklisted creators."
+        f"Skipped {skipped_duplicates} same-run duplicates, {skipped_existing} existing monday creators, "
+        f"and {skipped_blocked} blocklisted creators."
     )
 
 
