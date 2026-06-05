@@ -10,11 +10,11 @@ on:
       search:
         description: "Search keyword, hashtag, niche, or creator category"
         required: true
-        default: "beauty creator"
+        default: "comedy skits creator"
       niche:
-        description: "monday niche label, like Beauty, Fitness, Gaming, Fashion"
+        description: "monday niche label, like Comedy, Beauty, Fitness, Gaming, Fashion"
         required: false
-        default: "Beauty"
+        default: "Comedy"
       min_followers:
         description: "Minimum follower count"
         required: true
@@ -22,11 +22,11 @@ on:
       max_creators:
         description: "Maximum creators to add"
         required: true
-        default: "25"
-      require_email:
-        description: "Only add profiles where public email is found: true or false"
+        default: "100"
+      creator_gender:
+        description: "Gender tag to apply to this search batch: Woman, Man, Non-binary, Mixed Team, or Unknown"
         required: true
-        default: "false"
+        default: "Unknown"
       group:
         description: "monday group key"
         required: true
@@ -59,21 +59,11 @@ jobs:
 
       - name: Discover social creators
         run: |
-          if [ "${{ github.event.inputs.require_email }}" = "true" ]; then
-            python src/apify_social_discovery.py \
-              --platform "${{ github.event.inputs.platform }}" \
-              --search "${{ github.event.inputs.search }}" \
-              --niche "${{ github.event.inputs.niche }}" \
-              --min-followers "${{ github.event.inputs.min_followers }}" \
-              --max-creators "${{ github.event.inputs.max_creators }}" \
-              --group "${{ github.event.inputs.group }}" \
-              --require-email
-          else
-            python src/apify_social_discovery.py \
-              --platform "${{ github.event.inputs.platform }}" \
-              --search "${{ github.event.inputs.search }}" \
-              --niche "${{ github.event.inputs.niche }}" \
-              --min-followers "${{ github.event.inputs.min_followers }}" \
-              --max-creators "${{ github.event.inputs.max_creators }}" \
-              --group "${{ github.event.inputs.group }}"
-          fi
+          python src/apify_social_discovery.py \
+            --platform "${{ github.event.inputs.platform }}" \
+            --search "${{ github.event.inputs.search }}" \
+            --niche "${{ github.event.inputs.niche }}" \
+            --min-followers "${{ github.event.inputs.min_followers }}" \
+            --max-creators "${{ github.event.inputs.max_creators }}" \
+            --creator-gender "${{ github.event.inputs.creator_gender }}" \
+            --group "${{ github.event.inputs.group }}"
