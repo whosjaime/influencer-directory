@@ -1,0 +1,61 @@
+name: Discover Public Social Creators No Apify
+
+on:
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: "instagram or tiktok"
+        required: true
+        default: "tiktok"
+      search:
+        description: "Search keyword, hashtag, niche, or creator category"
+        required: true
+        default: "comedy skits creator"
+      niche:
+        description: "monday niche label, like Comedy, Beauty, Fitness, Gaming, Fashion"
+        required: false
+        default: "Comedy"
+      max_creators:
+        description: "Maximum creators to add"
+        required: true
+        default: "100"
+      creator_gender:
+        description: "Gender tag to apply to this search batch: Woman, Man, Non-binary, Mixed Team, or Unknown"
+        required: true
+        default: "Unknown"
+      group:
+        description: "monday group key"
+        required: true
+        default: "new_leads"
+
+jobs:
+  discover-public-social-creators:
+    runs-on: ubuntu-latest
+
+    env:
+      MONDAY_TOKEN: ${{ secrets.MONDAY_TOKEN }}
+      MONDAY_API_KEY: ${{ secrets.MONDAY_API_KEY }}
+      MONDAY_BOARD_ID: 18416535896
+      MONDAY_DEFAULT_GROUP_ID: group_mm41wfhq
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Discover public social creators
+        run: |
+          python src/public_social_discovery.py \
+            --platform "${{ github.event.inputs.platform }}" \
+            --search "${{ github.event.inputs.search }}" \
+            --niche "${{ github.event.inputs.niche }}" \
+            --max-creators "${{ github.event.inputs.max_creators }}" \
+            --creator-gender "${{ github.event.inputs.creator_gender }}" \
+            --group "${{ github.event.inputs.group }}"
