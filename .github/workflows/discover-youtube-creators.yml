@@ -1,0 +1,71 @@
+name: Discover YouTube Creators
+
+on:
+  workflow_dispatch:
+    inputs:
+      keyword:
+        description: "Search keyword, like Minecraft YouTuber or beauty creator"
+        required: true
+        default: "Minecraft YouTuber"
+      niche:
+        description: "monday niche label, like Minecraft, Beauty, Tech, Family"
+        required: false
+        default: "Minecraft"
+      min_subscribers:
+        description: "Minimum subscriber count"
+        required: true
+        default: "10000"
+      max_creators:
+        description: "Maximum creators to add"
+        required: true
+        default: "25"
+      require_email:
+        description: "Only add channels with public emails in description: true or false"
+        required: true
+        default: "false"
+      group:
+        description: "monday group key"
+        required: true
+        default: "new_leads"
+
+jobs:
+  discover-youtube-creators:
+    runs-on: ubuntu-latest
+
+    env:
+      MONDAY_TOKEN: ${{ secrets.MONDAY_TOKEN }}
+      MONDAY_API_KEY: ${{ secrets.MONDAY_API_KEY }}
+      YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+      MONDAY_BOARD_ID: 18416535896
+      MONDAY_DEFAULT_GROUP_ID: group_mm41wfhq
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Discover creators
+        run: |
+          if [ "${{ github.event.inputs.require_email }}" = "true" ]; then
+            python src/youtube_discovery.py \
+              --keyword "${{ github.event.inputs.keyword }}" \
+              --niche "${{ github.event.inputs.niche }}" \
+              --min-subscribers "${{ github.event.inputs.min_subscribers }}" \
+              --max-creators "${{ github.event.inputs.max_creators }}" \
+              --group "${{ github.event.inputs.group }}" \
+              --require-email
+          else
+            python src/youtube_discovery.py \
+              --keyword "${{ github.event.inputs.keyword }}" \
+              --niche "${{ github.event.inputs.niche }}" \
+              --min-subscribers "${{ github.event.inputs.min_subscribers }}" \
+              --max-creators "${{ github.event.inputs.max_creators }}" \
+              --group "${{ github.event.inputs.group }}"
+          fi
