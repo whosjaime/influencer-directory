@@ -1,0 +1,16 @@
+{
+  "name": "text_name_column_id_if_you_have_one",
+  "creator_type": "text_creator_type_column_id",
+  "youtube_url": "link_youtube_url_column_id",
+  "handle": "text_handle_column_id",
+  "subscribers": "numbers_subscribers_column_id",
+  "median_recent_views": "numbers_median_views_column_id",
+  "shorts_ratio": "numbers_shorts_ratio_column_id",
+  "fit_score": "numbers_fit_score_column_id",
+  "tier": "status_tier_column_id",
+  "best_recent_video": "link_best_video_column_id",
+  "keyword_hits": "long_text_keywords_column_id",
+  "caution_hits": "long_text_cautions_column_id",
+  "notes": "long_text_notes_column_id",
+  "outreach_status": "status_outreach_column_id"
+}
