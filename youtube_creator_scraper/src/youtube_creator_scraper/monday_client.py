@@ -126,6 +126,17 @@ def coerce_number(value: Any) -> float | int | str:
         return str(value)
 
 
+def map_status_label(scraper_field: str, raw_value: Any) -> str:
+    value = str(raw_value)
+    if scraper_field == "tier":
+        return {
+            "Tier 1": "Top Talent",
+            "Tier 2": "Rising Talent",
+            "Tier 3": "Starter Talent",
+        }.get(value, "Awaiting")
+    return value
+
+
 def format_value(scraper_field: str, raw_value: Any, monday_column_id: str, column_type: str) -> Any:
     if raw_value in (None, ""):
         return None
@@ -134,7 +145,7 @@ def format_value(scraper_field: str, raw_value: Any, monday_column_id: str, colu
         return {"url": str(raw_value), "text": str(raw_value)}
 
     if column_type == "status":
-        return {"label": str(raw_value)}
+        return {"label": map_status_label(scraper_field, raw_value)}
 
     if column_type == "dropdown":
         if isinstance(raw_value, list):
