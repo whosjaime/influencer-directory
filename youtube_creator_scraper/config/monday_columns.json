@@ -4,6 +4,7 @@
   "subscribers": {"id": "numeric_mm41rm3s", "type": "numbers"},
   "handle": {"id": "text_mm41z276", "type": "text"},
   "platform": {"id": "dropdown_mm41fn22", "type": "dropdown", "value": "YouTube"},
+  "public_email": {"id": "email_mm41zs1s", "type": "email"},
   "name": {"id": "text_mm41bddw", "type": "text"},
   "last_posted_date": {"id": "date_mm41savv", "type": "date"},
   "creator_type": {"id": "dropdown_mm414dr3", "type": "dropdown"},
