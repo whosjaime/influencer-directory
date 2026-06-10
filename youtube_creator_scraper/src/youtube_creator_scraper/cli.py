@@ -135,6 +135,11 @@ def discover(args: argparse.Namespace) -> None:
             uploads_playlist = channel.get("contentDetails", {}).get("relatedPlaylists", {}).get("uploads", "")
             video_items = client.get_playlist_items(uploads_playlist, max_results=args.recent_videos) if uploads_playlist else []
             video_ids = [item.get("contentDetails", {}).get("videoId", "") for item in video_items]
+
+            if not video_ids:
+                fallback_items = client.search_recent_videos_for_channel(channel_id, max_results=args.recent_videos)
+                video_ids = [item.get("id", {}).get("videoId", "") for item in fallback_items]
+
             videos = client.get_videos(video_ids)
             video_summary = summarize_videos(videos, profile.get("positive_keywords", []), profile.get("caution_keywords", []))
             score, reasons = score_channel(channel, video_summary, profile)
