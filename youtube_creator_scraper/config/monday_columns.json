@@ -7,7 +7,6 @@
   "public_email": {"id": "email_mm41zs1s", "type": "email"},
   "name": {"id": "text_mm41bddw", "type": "text"},
   "last_posted_date": {"id": "date_mm41savv", "type": "date"},
-  "creator_type": {"id": "dropdown_mm414dr3", "type": "dropdown"},
   "date_added": {"id": "date_mm418sy2", "type": "date", "value": "today"},
   "niche": {"id": "dropdown_mm41g7af", "type": "dropdown", "value": "Minecraft"},
   "description_preview": {"id": "long_text_mm41xm9j", "type": "long_text"},
