@@ -1,14 +1,9 @@
 {
-  "outreach_status": {"id": "color_mm4185f6", "type": "status"},
-  "tier": {"id": "color_mm41a1b0", "type": "status"},
   "subscribers": {"id": "numeric_mm41rm3s", "type": "numbers"},
   "handle": {"id": "text_mm41z276", "type": "text"},
-  "platform": {"id": "dropdown_mm41fn22", "type": "dropdown", "value": "YouTube"},
-  "public_email": {"id": "email_mm41zs1s", "type": "email"},
   "name": {"id": "text_mm41bddw", "type": "text"},
   "last_posted_date": {"id": "date_mm41savv", "type": "date"},
   "date_added": {"id": "date_mm418sy2", "type": "date", "value": "today"},
-  "niche": {"id": "dropdown_mm41g7af", "type": "dropdown", "value": "Minecraft"},
   "description_preview": {"id": "long_text_mm41xm9j", "type": "long_text"},
   "youtube_url": {"id": "link_mm417svc", "type": "link"}
 }
