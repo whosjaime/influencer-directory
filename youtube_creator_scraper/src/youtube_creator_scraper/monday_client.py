@@ -18,9 +18,14 @@ class MondayClient:
     API_URL = "https://api.monday.com/v2"
 
     def __init__(self, api_token: Optional[str] = None) -> None:
-        self.api_token = api_token or os.getenv("MONDAY_API_TOKEN")
+        self.api_token = (
+            api_token
+            or os.getenv("MONDAY_API_TOKEN")
+            or os.getenv("MONDAY_TOKEN")
+            or os.getenv("MONDAY_API_KEY")
+        )
         if not self.api_token:
-            raise MondayAPIError("Missing MONDAY_API_TOKEN.")
+            raise MondayAPIError("Missing Monday token. Add MONDAY_API_TOKEN, MONDAY_TOKEN, or MONDAY_API_KEY to GitHub Secrets.")
 
     def _post(self, query: str, variables: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         response = requests.post(
