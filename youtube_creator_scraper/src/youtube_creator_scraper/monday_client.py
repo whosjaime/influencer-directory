@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import json
 import os
-from datetime import date, datetime
-from typing import Any, Dict, Iterable, List, Optional
+from datetime import date
+from typing import Any, Dict, Iterable, List, Optional, Set, Tuple
 
 import requests
 
@@ -54,9 +54,63 @@ class MondayClient:
         }
         return self._post(mutation, variables)["create_item"]
 
+    def fetch_existing_column_texts(self, board_id: int, column_id: str) -> Set[str]:
+        """Fetch existing text values for a board column, paginating through board items.
+
+        Used for duplicate protection before creating new leads.
+        """
+        query = """
+        query ExistingItems($board_id: [ID!], $cursor: String) {
+          boards(ids: $board_id) {
+            items_page(limit: 500, cursor: $cursor) {
+              cursor
+              items {
+                id
+                name
+                column_values(ids: [$column_id]) {
+                  id
+                  text
+                  value
+                }
+              }
+            }
+          }
+        }
+        """
+        seen: Set[str] = set()
+        cursor: Optional[str] = None
+        while True:
+            data = self._post(query, {"board_id": [str(board_id)], "cursor": cursor, "column_id": column_id})
+            boards = data.get("boards", [])
+            if not boards:
+                return seen
+            page = boards[0].get("items_page", {})
+            for item in page.get("items", []):
+                for column in item.get("column_values", []):
+                    text = column.get("text") or ""
+                    value = column.get("value") or ""
+                    for candidate in (text, value):
+                        normalized = normalize_profile_url(candidate)
+                        if normalized:
+                            seen.add(normalized)
+            cursor = page.get("cursor")
+            if not cursor:
+                return seen
+
 
 def today_iso() -> str:
     return date.today().isoformat()
+
+
+def normalize_profile_url(value: Any) -> str:
+    text = str(value or "").strip().lower()
+    if not text:
+        return ""
+    if "youtube.com" not in text and "youtu.be" not in text:
+        return ""
+    text = text.replace("https://", "").replace("http://", "").replace("www.", "")
+    text = text.split("?")[0].split("#")[0].rstrip("/")
+    return text
 
 
 def coerce_number(value: Any) -> float | int | str:
@@ -125,6 +179,15 @@ def build_column_values(row: Dict[str, Any], mapping: Dict[str, Any]) -> Dict[st
     return values
 
 
+def get_mapping_column_id(mapping: Dict[str, Any], field: str) -> Optional[str]:
+    config = mapping.get(field)
+    if isinstance(config, str):
+        return config
+    if isinstance(config, dict):
+        return config.get("id")
+    return None
+
+
 def push_rows_to_monday(
     rows: Iterable[Dict[str, Any]],
     board_id: int,
@@ -134,10 +197,26 @@ def push_rows_to_monday(
 ) -> List[Dict[str, Any]]:
     client = MondayClient()
     created: List[Dict[str, Any]] = []
-    for index, row in enumerate(rows):
-        if limit is not None and index >= limit:
+    skipped_duplicates = 0
+    profile_url_column_id = get_mapping_column_id(mapping, "youtube_url")
+    existing_urls = client.fetch_existing_column_texts(board_id, profile_url_column_id) if profile_url_column_id else set()
+
+    for row in rows:
+        if limit is not None and len(created) >= limit:
             break
+
+        normalized_url = normalize_profile_url(row.get("youtube_url"))
+        if normalized_url and normalized_url in existing_urls:
+            skipped_duplicates += 1
+            continue
+
         item_name = row.get("name") or row.get("youtube_url") or "YouTube Creator Lead"
         column_values = build_column_values(row, mapping)
-        created.append(client.create_item(board_id=board_id, group_id=group_id, item_name=str(item_name), column_values=column_values))
+        item = client.create_item(board_id=board_id, group_id=group_id, item_name=str(item_name), column_values=column_values)
+        created.append(item)
+        if normalized_url:
+            existing_urls.add(normalized_url)
+
+    if skipped_duplicates:
+        print(f"Skipped {skipped_duplicates} duplicate Monday leads based on YouTube URL.")
     return created
