@@ -1,0 +1,55 @@
+{
+  "minecraft_shorts_creator": {
+    "description": "Creators making Minecraft Shorts, build battles, challenges, skits, POVs, or funny Minecraft content.",
+    "queries": [
+      "minecraft shorts creator",
+      "minecraft build battle shorts",
+      "minecraft challenge shorts",
+      "minecraft skit shorts",
+      "minecraft pov shorts",
+      "funny minecraft shorts",
+      "minecraft irl challenge shorts",
+      "minecraft roleplay shorts"
+    ],
+    "positive_keywords": ["minecraft", "build battle", "challenge", "shorts", "pov", "skit", "funny", "irl", "roleplay", "server", "mod", "survival"],
+    "caution_keywords": ["too young", "kid", "kids only", "13", "14", "15", "16"],
+    "min_subscribers": 50000,
+    "max_subscribers": 3000000,
+    "ideal_min_subscribers": 100000,
+    "ideal_max_subscribers": 1500000
+  },
+  "family_friendly_challenge_creator": {
+    "description": "On-camera creator-led challenge channels that can adapt into Minecraft/product-led concepts.",
+    "queries": [
+      "family friendly challenge shorts creator",
+      "youtube shorts challenge creator",
+      "irl challenge shorts creator",
+      "funny challenge youtube shorts",
+      "creator led challenge shorts",
+      "clean comedy challenge shorts"
+    ],
+    "positive_keywords": ["challenge", "family friendly", "clean", "funny", "irl", "collab", "friends", "game", "games", "shorts", "skit", "creator"],
+    "caution_keywords": ["prank gone wrong", "adult", "explicit", "18+", "casino", "dating"],
+    "min_subscribers": 50000,
+    "max_subscribers": 3000000,
+    "ideal_min_subscribers": 100000,
+    "ideal_max_subscribers": 1200000
+  },
+  "animated_pov_skit_creator": {
+    "description": "Animated, expressive POV/skit personalities with strong retention potential.",
+    "queries": [
+      "pov skit youtube shorts creator",
+      "animated comedy shorts creator",
+      "funny pov shorts creator",
+      "youtube shorts skit creator",
+      "high energy shorts creator",
+      "teen comedy shorts creator"
+    ],
+    "positive_keywords": ["pov", "skit", "comedy", "funny", "shorts", "animated", "high energy", "reaction", "story", "friends", "challenge"],
+    "caution_keywords": ["too young", "kid", "kids only", "explicit", "adult", "dating", "club"],
+    "min_subscribers": 50000,
+    "max_subscribers": 2500000,
+    "ideal_min_subscribers": 100000,
+    "ideal_max_subscribers": 1000000
+  }
+}
