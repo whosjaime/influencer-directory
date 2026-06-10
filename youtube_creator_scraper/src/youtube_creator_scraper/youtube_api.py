@@ -47,6 +47,21 @@ class YouTubeClient:
             },
         )
 
+    def search_recent_videos_for_channel(self, channel_id: str, max_results: int = 25) -> List[Dict[str, Any]]:
+        """Fallback recent-upload lookup using YouTube search.list by channelId."""
+        data = self._get(
+            "search",
+            {
+                "part": "snippet",
+                "type": "video",
+                "channelId": channel_id,
+                "order": "date",
+                "maxResults": min(max_results, 50),
+                "safeSearch": "strict",
+            },
+        )
+        return data.get("items", [])
+
     def get_channels(self, channel_ids: Iterable[str]) -> List[Dict[str, Any]]:
         ids = [cid for cid in channel_ids if cid]
         results: List[Dict[str, Any]] = []
@@ -67,15 +82,20 @@ class YouTubeClient:
         items: List[Dict[str, Any]] = []
         page_token: Optional[str] = None
         while len(items) < max_results:
-            data = self._get(
-                "playlistItems",
-                {
-                    "part": "snippet,contentDetails",
-                    "playlistId": playlist_id,
-                    "maxResults": min(50, max_results - len(items)),
-                    "pageToken": page_token or "",
-                },
-            )
+            try:
+                data = self._get(
+                    "playlistItems",
+                    {
+                        "part": "snippet,contentDetails",
+                        "playlistId": playlist_id,
+                        "maxResults": min(50, max_results - len(items)),
+                        "pageToken": page_token or "",
+                    },
+                )
+            except YouTubeAPIError as exc:
+                if "playlistNotFound" in str(exc) or "cannot be found" in str(exc):
+                    return []
+                raise
             items.extend(data.get("items", []))
             page_token = data.get("nextPageToken")
             if not page_token:
