@@ -65,14 +65,14 @@ class MondayClient:
         Used for duplicate protection before creating new leads.
         """
         query = """
-        query ExistingItems($board_id: [ID!], $cursor: String) {
+        query ExistingItems($board_id: [ID!], $cursor: String, $column_id: [String!]) {
           boards(ids: $board_id) {
             items_page(limit: 500, cursor: $cursor) {
               cursor
               items {
                 id
                 name
-                column_values(ids: [$column_id]) {
+                column_values(ids: $column_id) {
                   id
                   text
                   value
@@ -85,7 +85,7 @@ class MondayClient:
         seen: Set[str] = set()
         cursor: Optional[str] = None
         while True:
-            data = self._post(query, {"board_id": [str(board_id)], "cursor": cursor, "column_id": column_id})
+            data = self._post(query, {"board_id": [str(board_id)], "cursor": cursor, "column_id": [column_id]})
             boards = data.get("boards", [])
             if not boards:
                 return seen
