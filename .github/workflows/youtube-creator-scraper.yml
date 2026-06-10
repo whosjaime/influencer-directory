@@ -1,0 +1,57 @@
+name: YouTube Creator Scraper
+
+on:
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: Creator search profile
+        required: false
+        default: minecraft_shorts_creator
+      monday_limit:
+        description: Max leads to create in Monday for this run
+        required: false
+        default: "5"
+      pages_per_query:
+        description: YouTube search pages per query
+        required: false
+        default: "1"
+      recent_videos:
+        description: Recent videos to inspect per channel
+        required: false
+        default: "5"
+      min_score:
+        description: Minimum fit score
+        required: false
+        default: "50"
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        working-directory: youtube_creator_scraper
+        run: pip install -r requirements.txt
+
+      - name: Run YouTube scraper and push to Monday
+        working-directory: youtube_creator_scraper
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+          MONDAY_API_TOKEN: ${{ secrets.MONDAY_API_TOKEN }}
+          MONDAY_BOARD_ID: ${{ secrets.MONDAY_BOARD_ID }}
+          MONDAY_GROUP_ID: ${{ secrets.MONDAY_GROUP_ID }}
+        run: |
+          python -m src.youtube_creator_scraper.cli \
+            --profile "${{ github.event.inputs.profile }}" \
+            --pages-per-query "${{ github.event.inputs.pages_per_query }}" \
+            --recent-videos "${{ github.event.inputs.recent_videos }}" \
+            --min-score "${{ github.event.inputs.min_score }}" \
+            --push-monday \
+            --monday-limit "${{ github.event.inputs.monday_limit }}"
