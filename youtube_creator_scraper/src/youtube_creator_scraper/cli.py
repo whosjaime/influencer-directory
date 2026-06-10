@@ -7,6 +7,7 @@ import os
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Set
 
+from .email_enrichment import extract_public_emails
 from .monday_client import push_rows_to_monday
 from .scoring import normalize_text, normalize_url, parse_int, score_channel, summarize_videos, tier_from_score
 from .youtube_api import YouTubeClient
@@ -56,6 +57,13 @@ def is_blocked(channel: Dict[str, Any], blocked: Dict[str, Set[str]]) -> bool:
     )
 
 
+def in_subscriber_range(channel: Dict[str, Any], profile: Dict[str, Any], args: argparse.Namespace) -> bool:
+    subscribers = parse_int(channel.get("statistics", {}).get("subscriberCount"))
+    min_subscribers = args.min_subscribers if args.min_subscribers is not None else profile.get("min_subscribers", 0)
+    max_subscribers = args.max_subscribers if args.max_subscribers is not None else profile.get("max_subscribers", 10**12)
+    return min_subscribers <= subscribers <= max_subscribers
+
+
 def channel_to_row(channel: Dict[str, Any], profile_name: str, profile: Dict[str, Any], video_summary: Dict[str, Any], score: int, reasons: List[str]) -> Dict[str, Any]:
     snippet = channel.get("snippet", {})
     stats = channel.get("statistics", {})
@@ -63,6 +71,7 @@ def channel_to_row(channel: Dict[str, Any], profile_name: str, profile: Dict[str
     custom_url = snippet.get("customUrl", "")
     youtube_url = f"https://www.youtube.com/{custom_url}" if custom_url else f"https://www.youtube.com/channel/{channel_id}"
     description = snippet.get("description", "")
+    public_emails = extract_public_emails(description)
 
     return {
         "name": snippet.get("title", ""),
@@ -70,6 +79,8 @@ def channel_to_row(channel: Dict[str, Any], profile_name: str, profile: Dict[str
         "youtube_url": youtube_url,
         "channel_id": channel_id,
         "handle": custom_url,
+        "public_email": public_emails[0] if public_emails else "",
+        "public_emails_all": ", ".join(public_emails),
         "subscribers": parse_int(stats.get("subscriberCount")),
         "total_views": parse_int(stats.get("viewCount")),
         "video_count": parse_int(stats.get("videoCount")),
@@ -131,6 +142,8 @@ def discover(args: argparse.Namespace) -> None:
             seen_channel_ids.add(channel_id)
             if is_blocked(channel, do_not_contact):
                 continue
+            if not in_subscriber_range(channel, profile, args):
+                continue
 
             uploads_playlist = channel.get("contentDetails", {}).get("relatedPlaylists", {}).get("uploads", "")
             video_items = client.get_playlist_items(uploads_playlist, max_results=args.recent_videos) if uploads_playlist else []
@@ -150,7 +163,7 @@ def discover(args: argparse.Namespace) -> None:
     rows.sort(key=lambda r: (r["fit_score"], r["median_recent_views"], r["subscribers"]), reverse=True)
 
     fieldnames = list(rows[0].keys()) if rows else [
-        "name", "creator_type", "youtube_url", "channel_id", "handle", "subscribers",
+        "name", "creator_type", "youtube_url", "channel_id", "handle", "public_email", "public_emails_all", "subscribers",
         "total_views", "video_count", "country", "last_posted_date", "videos_last_30_days",
         "shorts_ratio", "avg_recent_views", "median_recent_views", "best_recent_video",
         "best_recent_video_title", "keyword_hits", "caution_hits", "fit_score", "tier",
@@ -200,6 +213,8 @@ def parse_args(argv: Iterable[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--pages-per-query", type=int, default=1, help="Each search page costs quota. Start with 1.")
     parser.add_argument("--recent-videos", type=int, default=20, help="How many recent uploads to score.")
     parser.add_argument("--min-score", type=int, default=40, help="Minimum fit score to keep.")
+    parser.add_argument("--min-subscribers", type=int, default=None, help="Optional hard minimum subscriber count override.")
+    parser.add_argument("--max-subscribers", type=int, default=None, help="Optional hard maximum subscriber count override.")
     parser.add_argument("--push-monday", action="store_true", help="Automatically create Monday.com items for the leads.")
     parser.add_argument("--monday-board-id", default=os.getenv("MONDAY_BOARD_ID"), help="Monday board ID. Defaults to MONDAY_BOARD_ID env var.")
     parser.add_argument("--monday-group-id", default=os.getenv("MONDAY_GROUP_ID"), help="Optional Monday group ID. Defaults to MONDAY_GROUP_ID env var.")
