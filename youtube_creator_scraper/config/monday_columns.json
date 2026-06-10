@@ -10,6 +10,5 @@
   "date_added": {"id": "date_mm418sy2", "type": "date", "value": "today"},
   "niche": {"id": "dropdown_mm41g7af", "type": "dropdown", "value": "Minecraft"},
   "description_preview": {"id": "long_text_mm41xm9j", "type": "long_text"},
-  "country": {"id": "dropdown_mm41wnna", "type": "dropdown"},
   "youtube_url": {"id": "link_mm417svc", "type": "link"}
 }
