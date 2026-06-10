@@ -7,6 +7,7 @@ import os
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Set
 
+from .monday_client import push_rows_to_monday
 from .scoring import normalize_text, normalize_url, parse_int, score_channel, summarize_videos, tier_from_score
 from .youtube_api import YouTubeClient
 
@@ -166,6 +167,23 @@ def discover(args: argparse.Namespace) -> None:
     print(f"Saved {len(rows)} leads to {csv_path}")
     print(f"Saved JSONL to {jsonl_path}")
 
+    if args.push_monday:
+        board_id = args.monday_board_id or os.getenv("MONDAY_BOARD_ID")
+        if not board_id:
+            raise SystemExit("Missing Monday board id. Pass --monday-board-id or set MONDAY_BOARD_ID.")
+        mapping_path = Path(args.monday_mapping)
+        if not mapping_path.exists():
+            raise SystemExit(f"Missing Monday mapping file: {mapping_path}. Copy config/monday_columns.example.json and replace the placeholder column IDs.")
+        mapping = load_json(mapping_path)
+        created = push_rows_to_monday(
+            rows,
+            board_id=int(board_id),
+            mapping=mapping,
+            group_id=args.monday_group_id or os.getenv("MONDAY_GROUP_ID"),
+            limit=args.monday_limit,
+        )
+        print(f"Pushed {len(created)} leads to Monday board {board_id}.")
+
 
 def parse_args(argv: Iterable[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Find YouTube creator leads for Minecraft/product-led Shorts campaigns.")
@@ -177,6 +195,11 @@ def parse_args(argv: Iterable[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--pages-per-query", type=int, default=1, help="Each search page costs quota. Start with 1.")
     parser.add_argument("--recent-videos", type=int, default=20, help="How many recent uploads to score.")
     parser.add_argument("--min-score", type=int, default=40, help="Minimum fit score to keep.")
+    parser.add_argument("--push-monday", action="store_true", help="Automatically create Monday.com items for the leads.")
+    parser.add_argument("--monday-board-id", default=os.getenv("MONDAY_BOARD_ID"), help="Monday board ID. Defaults to MONDAY_BOARD_ID env var.")
+    parser.add_argument("--monday-group-id", default=os.getenv("MONDAY_GROUP_ID"), help="Optional Monday group ID. Defaults to MONDAY_GROUP_ID env var.")
+    parser.add_argument("--monday-mapping", default="config/monday_columns.json", help="JSON mapping from scraper fields to Monday column IDs.")
+    parser.add_argument("--monday-limit", type=int, default=None, help="Optional limit for how many leads to push to Monday.")
     return parser.parse_args(argv)
 
 
