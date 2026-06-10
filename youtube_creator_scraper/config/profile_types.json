@@ -13,10 +13,10 @@
     ],
     "positive_keywords": ["minecraft", "build battle", "challenge", "shorts", "pov", "skit", "funny", "irl", "roleplay", "server", "mod", "survival"],
     "caution_keywords": ["too young", "kid", "kids only", "13", "14", "15", "16"],
-    "min_subscribers": 50000,
-    "max_subscribers": 3000000,
-    "ideal_min_subscribers": 100000,
-    "ideal_max_subscribers": 1500000
+    "min_subscribers": 100000,
+    "max_subscribers": 999999,
+    "ideal_min_subscribers": 150000,
+    "ideal_max_subscribers": 750000
   },
   "family_friendly_challenge_creator": {
     "description": "On-camera creator-led challenge channels that can adapt into Minecraft/product-led concepts.",
@@ -30,10 +30,10 @@
     ],
     "positive_keywords": ["challenge", "family friendly", "clean", "funny", "irl", "collab", "friends", "game", "games", "shorts", "skit", "creator"],
     "caution_keywords": ["prank gone wrong", "adult", "explicit", "18+", "casino", "dating"],
-    "min_subscribers": 50000,
-    "max_subscribers": 3000000,
-    "ideal_min_subscribers": 100000,
-    "ideal_max_subscribers": 1200000
+    "min_subscribers": 100000,
+    "max_subscribers": 999999,
+    "ideal_min_subscribers": 150000,
+    "ideal_max_subscribers": 750000
   },
   "animated_pov_skit_creator": {
     "description": "Animated, expressive POV/skit personalities with strong retention potential.",
@@ -47,9 +47,9 @@
     ],
     "positive_keywords": ["pov", "skit", "comedy", "funny", "shorts", "animated", "high energy", "reaction", "story", "friends", "challenge"],
     "caution_keywords": ["too young", "kid", "kids only", "explicit", "adult", "dating", "club"],
-    "min_subscribers": 50000,
-    "max_subscribers": 2500000,
-    "ideal_min_subscribers": 100000,
-    "ideal_max_subscribers": 1000000
+    "min_subscribers": 100000,
+    "max_subscribers": 999999,
+    "ideal_min_subscribers": 150000,
+    "ideal_max_subscribers": 750000
   }
 }
