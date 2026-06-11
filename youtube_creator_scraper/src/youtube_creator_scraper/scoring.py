@@ -114,6 +114,11 @@ def score_channel(channel: Dict[str, Any], video_summary: Dict[str, Any], profil
     snippet = channel.get("snippet", {})
     branding = channel.get("brandingSettings", {}).get("channel", {})
     subscribers = parse_int(stats.get("subscriberCount"))
+    min_subscribers = profile.get("min_subscribers", 0)
+    max_subscribers = profile.get("max_subscribers", 10**12)
+    if not (min_subscribers <= subscribers <= max_subscribers):
+        return 0, [f"outside subscriber range: {subscribers}"]
+
     text = " ".join([
         snippet.get("title", ""),
         snippet.get("description", ""),
@@ -124,9 +129,8 @@ def score_channel(channel: Dict[str, Any], video_summary: Dict[str, Any], profil
     score = 0
     reasons: List[str] = []
 
-    if profile.get("min_subscribers", 0) <= subscribers <= profile.get("max_subscribers", 10**12):
-        score += 20
-        reasons.append("subscriber range fit")
+    score += 20
+    reasons.append("subscriber range fit")
     if profile.get("ideal_min_subscribers", 0) <= subscribers <= profile.get("ideal_max_subscribers", 10**12):
         score += 10
         reasons.append("ideal subscriber range")
