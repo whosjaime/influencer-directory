@@ -12,6 +12,10 @@ class YouTubeAPIError(RuntimeError):
     pass
 
 
+class YouTubeQuotaExceeded(YouTubeAPIError):
+    pass
+
+
 class YouTubeClient:
     """Small wrapper around the YouTube Data API v3."""
 
@@ -22,13 +26,19 @@ class YouTubeClient:
         if not self.api_key:
             raise YouTubeAPIError("Missing YouTube API key. Set YOUTUBE_API_KEY before running.")
         self.sleep_seconds = sleep_seconds
+        self.quota_exceeded = False
 
     def _get(self, path: str, params: Dict[str, Any]) -> Dict[str, Any]:
+        if self.quota_exceeded:
+            return {"items": []}
         params = {**params, "key": self.api_key}
         url = f"{self.BASE_URL}/{path}?{urlencode(params, doseq=True)}"
         response = requests.get(url, timeout=30)
         if self.sleep_seconds:
             time.sleep(self.sleep_seconds)
+        if response.status_code == 429 or "rateLimitExceeded" in response.text or "Quota exceeded" in response.text:
+            self.quota_exceeded = True
+            raise YouTubeQuotaExceeded(f"YouTube quota exceeded: {response.text[:500]}")
         if response.status_code >= 400:
             raise YouTubeAPIError(f"YouTube API error {response.status_code}: {response.text[:500]}")
         return response.json()
