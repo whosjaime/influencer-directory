@@ -6,11 +6,11 @@ on:
       profile:
         description: Creator search profile
         required: false
-        default: minecraft_shorts_creator
+        default: all
       monday_limit:
         description: Max leads to create in Monday for this run
         required: false
-        default: "5"
+        default: "25"
       pages_per_query:
         description: YouTube search pages per query
         required: false
@@ -18,11 +18,14 @@ on:
       recent_videos:
         description: Recent videos to inspect per channel
         required: false
-        default: "5"
+        default: "3"
       min_score:
         description: Minimum fit score
         required: false
-        default: "50"
+        default: "40"
+
+  schedule:
+    - cron: "0 15 * * *"
 
 jobs:
   scrape:
@@ -30,6 +33,14 @@ jobs:
     steps:
       - name: Check out repo
         uses: actions/checkout@v4
+
+      - name: Set scraper defaults
+        run: |
+          echo "SCRAPER_PROFILE=${{ github.event.inputs.profile || 'all' }}" >> $GITHUB_ENV
+          echo "SCRAPER_MONDAY_LIMIT=${{ github.event.inputs.monday_limit || '25' }}" >> $GITHUB_ENV
+          echo "SCRAPER_PAGES_PER_QUERY=${{ github.event.inputs.pages_per_query || '1' }}" >> $GITHUB_ENV
+          echo "SCRAPER_RECENT_VIDEOS=${{ github.event.inputs.recent_videos || '3' }}" >> $GITHUB_ENV
+          echo "SCRAPER_MIN_SCORE=${{ github.event.inputs.min_score || '40' }}" >> $GITHUB_ENV
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -49,9 +60,9 @@ jobs:
           MONDAY_GROUP_ID: ${{ secrets.MONDAY_GROUP_ID }}
         run: |
           python -m src.youtube_creator_scraper.cli \
-            --profile "${{ github.event.inputs.profile }}" \
-            --pages-per-query "${{ github.event.inputs.pages_per_query }}" \
-            --recent-videos "${{ github.event.inputs.recent_videos }}" \
-            --min-score "${{ github.event.inputs.min_score }}" \
+            --profile "$SCRAPER_PROFILE" \
+            --pages-per-query "$SCRAPER_PAGES_PER_QUERY" \
+            --recent-videos "$SCRAPER_RECENT_VIDEOS" \
+            --min-score "$SCRAPER_MIN_SCORE" \
             --push-monday \
-            --monday-limit "${{ github.event.inputs.monday_limit }}"
+            --monday-limit "$SCRAPER_MONDAY_LIMIT"
