@@ -1,52 +1,90 @@
 {
+  "viral_shorts_creator": {
+    "description": "Broad viral YouTube Shorts creators with trendy, high-retention short-form content.",
+    "queries": [
+      "viral shorts creator",
+      "trending youtube shorts creator",
+      "funny viral shorts creator",
+      "shorts creator comedy viral",
+      "youtube shorts creator trending",
+      "viral challenge shorts creator",
+      "relatable shorts creator",
+      "short form creator viral"
+    ],
+    "positive_keywords": ["shorts", "viral", "trending", "trend", "funny", "comedy", "challenge", "relatable", "pov", "skit", "reaction", "story", "creator", "friends"],
+    "caution_keywords": ["explicit", "adult", "18+", "casino", "gambling", "dating", "onlyfans", "politics"],
+    "min_subscribers": 100000,
+    "max_subscribers": 999999,
+    "ideal_min_subscribers": 150000,
+    "ideal_max_subscribers": 750000
+  },
+  "comedy_prank_challenge_creator": {
+    "description": "Comedy, prank, public challenge, and creator-led entertainment Shorts creators.",
+    "queries": [
+      "comedy shorts creator",
+      "funny prank shorts creator",
+      "public challenge shorts creator",
+      "youtube shorts challenge creator",
+      "creator led challenge shorts",
+      "funny challenge youtube shorts",
+      "clean prank shorts creator",
+      "family friendly challenge shorts creator"
+    ],
+    "positive_keywords": ["comedy", "funny", "prank", "challenge", "public", "family friendly", "clean", "friends", "collab", "shorts", "skit", "reaction"],
+    "caution_keywords": ["prank gone wrong", "explicit", "adult", "18+", "casino", "dating", "onlyfans"],
+    "min_subscribers": 100000,
+    "max_subscribers": 999999,
+    "ideal_min_subscribers": 150000,
+    "ideal_max_subscribers": 750000
+  },
+  "pov_skit_story_creator": {
+    "description": "POV, skit, storytelling, expressive personality-led Shorts creators.",
+    "queries": [
+      "pov skit youtube shorts creator",
+      "funny pov shorts creator",
+      "youtube shorts skit creator",
+      "relatable pov shorts creator",
+      "storytime shorts creator",
+      "high energy shorts creator",
+      "comedy skit shorts creator",
+      "animated comedy shorts creator"
+    ],
+    "positive_keywords": ["pov", "skit", "story", "storytime", "comedy", "funny", "shorts", "relatable", "reaction", "high energy", "friends", "challenge"],
+    "caution_keywords": ["too young", "kids only", "explicit", "adult", "18+", "dating", "club"],
+    "min_subscribers": 100000,
+    "max_subscribers": 999999,
+    "ideal_min_subscribers": 150000,
+    "ideal_max_subscribers": 750000
+  },
+  "food_asmr_satisfying_creator": {
+    "description": "Food, ASMR, satisfying, lifestyle, and sensory Shorts creators with viral-format potential.",
+    "queries": [
+      "food shorts creator",
+      "viral cooking shorts creator",
+      "asmr shorts creator",
+      "satisfying shorts creator",
+      "oddly satisfying shorts creator",
+      "snack review shorts creator",
+      "food challenge shorts creator",
+      "viral recipe shorts creator"
+    ],
+    "positive_keywords": ["food", "cooking", "recipe", "snack", "asmr", "satisfying", "viral", "shorts", "challenge", "review", "reaction", "trend"],
+    "caution_keywords": ["explicit", "adult", "18+", "diet pills", "weight loss scam", "gambling"],
+    "min_subscribers": 100000,
+    "max_subscribers": 999999,
+    "ideal_min_subscribers": 150000,
+    "ideal_max_subscribers": 750000
+  },
   "minecraft_shorts_creator": {
     "description": "Creators making Minecraft Shorts, build battles, challenges, skits, POVs, or funny Minecraft content.",
     "queries": [
       "minecraft shorts creator",
-      "minecraft build battle shorts",
       "minecraft challenge shorts",
       "minecraft skit shorts",
-      "minecraft pov shorts",
-      "funny minecraft shorts",
-      "minecraft irl challenge shorts",
-      "minecraft roleplay shorts"
+      "minecraft pov shorts"
     ],
-    "positive_keywords": ["minecraft", "build battle", "challenge", "shorts", "pov", "skit", "funny", "irl", "roleplay", "server", "mod", "survival"],
+    "positive_keywords": ["minecraft", "build battle", "challenge", "shorts", "pov", "skit", "funny", "roleplay", "server", "mod", "survival"],
     "caution_keywords": ["too young", "kid", "kids only", "13", "14", "15", "16"],
-    "min_subscribers": 100000,
-    "max_subscribers": 999999,
-    "ideal_min_subscribers": 150000,
-    "ideal_max_subscribers": 750000
-  },
-  "family_friendly_challenge_creator": {
-    "description": "On-camera creator-led challenge channels that can adapt into Minecraft/product-led concepts.",
-    "queries": [
-      "family friendly challenge shorts creator",
-      "youtube shorts challenge creator",
-      "irl challenge shorts creator",
-      "funny challenge youtube shorts",
-      "creator led challenge shorts",
-      "clean comedy challenge shorts"
-    ],
-    "positive_keywords": ["challenge", "family friendly", "clean", "funny", "irl", "collab", "friends", "game", "games", "shorts", "skit", "creator"],
-    "caution_keywords": ["prank gone wrong", "adult", "explicit", "18+", "casino", "dating"],
-    "min_subscribers": 100000,
-    "max_subscribers": 999999,
-    "ideal_min_subscribers": 150000,
-    "ideal_max_subscribers": 750000
-  },
-  "animated_pov_skit_creator": {
-    "description": "Animated, expressive POV/skit personalities with strong retention potential.",
-    "queries": [
-      "pov skit youtube shorts creator",
-      "animated comedy shorts creator",
-      "funny pov shorts creator",
-      "youtube shorts skit creator",
-      "high energy shorts creator",
-      "teen comedy shorts creator"
-    ],
-    "positive_keywords": ["pov", "skit", "comedy", "funny", "shorts", "animated", "high energy", "reaction", "story", "friends", "challenge"],
-    "caution_keywords": ["too young", "kid", "kids only", "explicit", "adult", "dating", "club"],
     "min_subscribers": 100000,
     "max_subscribers": 999999,
     "ideal_min_subscribers": 150000,
