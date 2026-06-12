@@ -13,10 +13,10 @@
     ],
     "positive_keywords": ["shorts", "viral", "trending", "trend", "funny", "comedy", "challenge", "relatable", "pov", "skit", "reaction", "story", "creator", "friends"],
     "caution_keywords": ["explicit", "adult", "18+", "casino", "gambling", "dating", "onlyfans", "politics"],
-    "min_subscribers": 100000,
-    "max_subscribers": 999999,
-    "ideal_min_subscribers": 150000,
-    "ideal_max_subscribers": 750000
+    "min_subscribers": 70000,
+    "max_subscribers": 500000,
+    "ideal_min_subscribers": 100000,
+    "ideal_max_subscribers": 350000
   },
   "comedy_prank_challenge_creator": {
     "description": "Comedy, prank, public challenge, and creator-led entertainment Shorts creators.",
@@ -32,10 +32,10 @@
     ],
     "positive_keywords": ["comedy", "funny", "prank", "challenge", "public", "family friendly", "clean", "friends", "collab", "shorts", "skit", "reaction"],
     "caution_keywords": ["prank gone wrong", "explicit", "adult", "18+", "casino", "dating", "onlyfans"],
-    "min_subscribers": 100000,
-    "max_subscribers": 999999,
-    "ideal_min_subscribers": 150000,
-    "ideal_max_subscribers": 750000
+    "min_subscribers": 70000,
+    "max_subscribers": 500000,
+    "ideal_min_subscribers": 100000,
+    "ideal_max_subscribers": 350000
   },
   "pov_skit_story_creator": {
     "description": "POV, skit, storytelling, expressive personality-led Shorts creators.",
@@ -51,10 +51,10 @@
     ],
     "positive_keywords": ["pov", "skit", "story", "storytime", "comedy", "funny", "shorts", "relatable", "reaction", "high energy", "friends", "challenge"],
     "caution_keywords": ["too young", "kids only", "explicit", "adult", "18+", "dating", "club"],
-    "min_subscribers": 100000,
-    "max_subscribers": 999999,
-    "ideal_min_subscribers": 150000,
-    "ideal_max_subscribers": 750000
+    "min_subscribers": 70000,
+    "max_subscribers": 500000,
+    "ideal_min_subscribers": 100000,
+    "ideal_max_subscribers": 350000
   },
   "food_asmr_satisfying_creator": {
     "description": "Food, ASMR, satisfying, lifestyle, and sensory Shorts creators with viral-format potential.",
@@ -70,10 +70,10 @@
     ],
     "positive_keywords": ["food", "cooking", "recipe", "snack", "asmr", "satisfying", "viral", "shorts", "challenge", "review", "reaction", "trend"],
     "caution_keywords": ["explicit", "adult", "18+", "diet pills", "weight loss scam", "gambling"],
-    "min_subscribers": 100000,
-    "max_subscribers": 999999,
-    "ideal_min_subscribers": 150000,
-    "ideal_max_subscribers": 750000
+    "min_subscribers": 70000,
+    "max_subscribers": 500000,
+    "ideal_min_subscribers": 100000,
+    "ideal_max_subscribers": 350000
   },
   "minecraft_shorts_creator": {
     "description": "Creators making Minecraft Shorts, build battles, challenges, skits, POVs, or funny Minecraft content.",
@@ -85,9 +85,9 @@
     ],
     "positive_keywords": ["minecraft", "build battle", "challenge", "shorts", "pov", "skit", "funny", "roleplay", "server", "mod", "survival"],
     "caution_keywords": ["too young", "kid", "kids only", "13", "14", "15", "16"],
-    "min_subscribers": 100000,
-    "max_subscribers": 999999,
-    "ideal_min_subscribers": 150000,
-    "ideal_max_subscribers": 750000
+    "min_subscribers": 70000,
+    "max_subscribers": 500000,
+    "ideal_min_subscribers": 100000,
+    "ideal_max_subscribers": 350000
   }
 }
