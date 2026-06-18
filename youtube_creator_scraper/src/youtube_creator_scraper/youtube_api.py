@@ -57,6 +57,21 @@ class YouTubeClient:
             },
         )
 
+    def search_videos(self, query: str, max_results: int = 50, page_token: Optional[str] = None) -> Dict[str, Any]:
+        return self._get(
+            "search",
+            {
+                "part": "snippet",
+                "type": "video",
+                "q": query,
+                "order": "relevance",
+                "maxResults": min(max_results, 50),
+                "pageToken": page_token or "",
+                "safeSearch": "strict",
+                "relevanceLanguage": "en",
+            },
+        )
+
     def search_recent_videos_for_channel(self, channel_id: str, max_results: int = 25) -> List[Dict[str, Any]]:
         """Fallback recent-upload lookup using YouTube search.list by channelId."""
         data = self._get(
