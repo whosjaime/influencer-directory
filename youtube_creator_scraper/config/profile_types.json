@@ -1,75 +1,62 @@
 {
-  "minecraft_facecam_creator": {
-    "description": "Small Minecraft creators with facecam, on-camera reactions, or creator-led challenge energy.",
+  "minecraft_channels_under_100k": {
+    "description": "Minecraft channels under 100k subscribers, prioritizing creators with commentary, facecam, challenges, reactions, or personality-led content.",
     "queries": [
+      "minecraft youtuber under 100k",
+      "small minecraft youtuber",
+      "minecraft challenge youtuber",
       "minecraft facecam youtuber",
-      "minecraft face cam creator",
-      "minecraft challenge facecam",
-      "minecraft survival facecam",
-      "minecraft reaction facecam",
-      "minecraft creator on camera",
-      "minecraft funny facecam",
-      "minecraft shorts facecam"
+      "minecraft survival youtuber",
+      "minecraft shorts creator",
+      "minecraft funny youtuber",
+      "minecraft commentary youtuber",
+      "minecraft but youtuber",
+      "minecraft smp youtuber"
     ],
-    "positive_keywords": ["minecraft", "facecam", "face cam", "reaction", "on camera", "challenge", "survival", "shorts", "funny", "pov", "skit", "friends"],
-    "caution_keywords": ["faceless", "no face", "no commentary", "too young", "kids only", "explicit", "adult", "18+"],
+    "positive_keywords": ["minecraft", "challenge", "facecam", "face cam", "commentary", "survival", "shorts", "funny", "reaction", "smp", "minecraft but", "creator"],
+    "caution_keywords": ["faceless", "no face", "no commentary", "explicit", "adult", "18+", "gambling", "casino"],
     "min_subscribers": 50000,
     "max_subscribers": 100000,
     "ideal_min_subscribers": 60000,
     "ideal_max_subscribers": 90000
   },
-  "minecraft_reaction_creator": {
-    "description": "Small Minecraft reaction and commentary creators who are likely comfortable on camera.",
+  "reaction_channels_under_100k": {
+    "description": "Reaction channels under 100k subscribers, including gaming, Minecraft, comedy, meme, and viral reaction creators.",
     "queries": [
+      "reaction youtuber under 100k",
+      "small reaction youtuber",
+      "gaming reaction youtuber",
       "minecraft reaction youtuber",
-      "minecraft reacts facecam",
-      "minecraft reaction shorts creator",
-      "minecraft commentary facecam",
+      "funny reaction youtuber",
+      "meme reaction youtuber",
+      "viral videos reaction youtuber",
+      "youtube shorts reaction creator",
       "reacting to minecraft videos",
-      "minecraft memes reaction",
-      "minecraft but reaction facecam",
-      "minecraft funny reaction youtuber"
+      "reaction shorts creator"
     ],
-    "positive_keywords": ["minecraft", "reaction", "reacts", "facecam", "commentary", "funny", "memes", "shorts", "challenge", "on camera", "creator"],
-    "caution_keywords": ["faceless", "no face", "no commentary", "explicit", "adult", "18+", "politics"],
+    "positive_keywords": ["reaction", "reacts", "reacting", "gaming", "minecraft", "funny", "memes", "shorts", "viral", "commentary", "facecam", "creator"],
+    "caution_keywords": ["explicit", "adult", "18+", "gambling", "casino", "onlyfans", "politics", "drama"],
     "min_subscribers": 50000,
     "max_subscribers": 100000,
     "ideal_min_subscribers": 60000,
     "ideal_max_subscribers": 90000
   },
-  "gaming_facecam_challenge_creator": {
-    "description": "Small gaming creators with facecam and challenge-style energy who could adapt into Minecraft/product content.",
+  "prank_channels_under_100k": {
+    "description": "Prank and challenge channels under 100k subscribers with creator-led on-camera entertainment energy.",
     "queries": [
-      "gaming facecam challenge youtuber",
-      "funny gaming facecam youtuber",
-      "family friendly gaming facecam",
-      "gaming challenge creator facecam",
-      "gaming reaction shorts creator",
-      "creator led gaming shorts",
-      "funny gaming shorts facecam",
-      "small gaming youtuber facecam"
+      "prank youtuber under 100k",
+      "small prank youtuber",
+      "funny prank youtuber",
+      "clean prank youtuber",
+      "family friendly prank youtuber",
+      "public prank youtuber",
+      "challenge prank youtuber",
+      "prank shorts creator",
+      "funny challenge youtuber",
+      "creator led prank shorts"
     ],
-    "positive_keywords": ["gaming", "facecam", "challenge", "funny", "reaction", "shorts", "family friendly", "clean", "friends", "on camera", "creator"],
-    "caution_keywords": ["faceless", "no face", "explicit", "adult", "18+", "casino", "gambling", "onlyfans"],
-    "min_subscribers": 50000,
-    "max_subscribers": 100000,
-    "ideal_min_subscribers": 60000,
-    "ideal_max_subscribers": 90000
-  },
-  "creator_led_shorts_reaction": {
-    "description": "Small creator-led reaction, comedy, and Shorts personalities with on-camera potential.",
-    "queries": [
-      "reaction shorts creator",
-      "funny reaction shorts creator",
-      "creator on camera shorts",
-      "high energy shorts creator",
-      "comedy reaction shorts creator",
-      "family friendly reaction creator",
-      "funny on camera shorts creator",
-      "viral reaction shorts creator"
-    ],
-    "positive_keywords": ["reaction", "reacts", "shorts", "funny", "comedy", "on camera", "creator", "challenge", "viral", "trend", "pov", "skit"],
-    "caution_keywords": ["explicit", "adult", "18+", "casino", "gambling", "dating", "onlyfans", "politics"],
+    "positive_keywords": ["prank", "challenge", "funny", "public", "clean", "family friendly", "shorts", "creator", "reaction", "comedy", "friends", "viral"],
+    "caution_keywords": ["prank gone wrong", "explicit", "adult", "18+", "harassment", "casino", "gambling", "onlyfans"],
     "min_subscribers": 50000,
     "max_subscribers": 100000,
     "ideal_min_subscribers": 60000,
