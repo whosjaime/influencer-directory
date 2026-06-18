@@ -1,93 +1,78 @@
 {
-  "viral_shorts_creator": {
-    "description": "Broad viral YouTube Shorts creators with trendy, high-retention short-form content.",
+  "minecraft_facecam_creator": {
+    "description": "Small Minecraft creators with facecam, on-camera reactions, or creator-led challenge energy.",
     "queries": [
-      "viral shorts creator",
-      "trending youtube shorts creator",
-      "funny viral shorts creator",
-      "shorts creator comedy viral",
-      "youtube shorts creator trending",
-      "viral challenge shorts creator",
-      "relatable shorts creator",
-      "short form creator viral"
+      "minecraft facecam youtuber",
+      "minecraft face cam creator",
+      "minecraft challenge facecam",
+      "minecraft survival facecam",
+      "minecraft reaction facecam",
+      "minecraft creator on camera",
+      "minecraft funny facecam",
+      "minecraft shorts facecam"
     ],
-    "positive_keywords": ["shorts", "viral", "trending", "trend", "funny", "comedy", "challenge", "relatable", "pov", "skit", "reaction", "story", "creator", "friends"],
-    "caution_keywords": ["explicit", "adult", "18+", "casino", "gambling", "dating", "onlyfans", "politics"],
-    "min_subscribers": 70000,
-    "max_subscribers": 500000,
-    "ideal_min_subscribers": 100000,
-    "ideal_max_subscribers": 350000
+    "positive_keywords": ["minecraft", "facecam", "face cam", "reaction", "on camera", "challenge", "survival", "shorts", "funny", "pov", "skit", "friends"],
+    "caution_keywords": ["faceless", "no face", "no commentary", "too young", "kids only", "explicit", "adult", "18+"],
+    "min_subscribers": 50000,
+    "max_subscribers": 100000,
+    "ideal_min_subscribers": 60000,
+    "ideal_max_subscribers": 90000
   },
-  "comedy_prank_challenge_creator": {
-    "description": "Comedy, prank, public challenge, and creator-led entertainment Shorts creators.",
+  "minecraft_reaction_creator": {
+    "description": "Small Minecraft reaction and commentary creators who are likely comfortable on camera.",
     "queries": [
-      "comedy shorts creator",
-      "funny prank shorts creator",
-      "public challenge shorts creator",
-      "youtube shorts challenge creator",
-      "creator led challenge shorts",
-      "funny challenge youtube shorts",
-      "clean prank shorts creator",
-      "family friendly challenge shorts creator"
+      "minecraft reaction youtuber",
+      "minecraft reacts facecam",
+      "minecraft reaction shorts creator",
+      "minecraft commentary facecam",
+      "reacting to minecraft videos",
+      "minecraft memes reaction",
+      "minecraft but reaction facecam",
+      "minecraft funny reaction youtuber"
     ],
-    "positive_keywords": ["comedy", "funny", "prank", "challenge", "public", "family friendly", "clean", "friends", "collab", "shorts", "skit", "reaction"],
-    "caution_keywords": ["prank gone wrong", "explicit", "adult", "18+", "casino", "dating", "onlyfans"],
-    "min_subscribers": 70000,
-    "max_subscribers": 500000,
-    "ideal_min_subscribers": 100000,
-    "ideal_max_subscribers": 350000
+    "positive_keywords": ["minecraft", "reaction", "reacts", "facecam", "commentary", "funny", "memes", "shorts", "challenge", "on camera", "creator"],
+    "caution_keywords": ["faceless", "no face", "no commentary", "explicit", "adult", "18+", "politics"],
+    "min_subscribers": 50000,
+    "max_subscribers": 100000,
+    "ideal_min_subscribers": 60000,
+    "ideal_max_subscribers": 90000
   },
-  "pov_skit_story_creator": {
-    "description": "POV, skit, storytelling, expressive personality-led Shorts creators.",
+  "gaming_facecam_challenge_creator": {
+    "description": "Small gaming creators with facecam and challenge-style energy who could adapt into Minecraft/product content.",
     "queries": [
-      "pov skit youtube shorts creator",
-      "funny pov shorts creator",
-      "youtube shorts skit creator",
-      "relatable pov shorts creator",
-      "storytime shorts creator",
+      "gaming facecam challenge youtuber",
+      "funny gaming facecam youtuber",
+      "family friendly gaming facecam",
+      "gaming challenge creator facecam",
+      "gaming reaction shorts creator",
+      "creator led gaming shorts",
+      "funny gaming shorts facecam",
+      "small gaming youtuber facecam"
+    ],
+    "positive_keywords": ["gaming", "facecam", "challenge", "funny", "reaction", "shorts", "family friendly", "clean", "friends", "on camera", "creator"],
+    "caution_keywords": ["faceless", "no face", "explicit", "adult", "18+", "casino", "gambling", "onlyfans"],
+    "min_subscribers": 50000,
+    "max_subscribers": 100000,
+    "ideal_min_subscribers": 60000,
+    "ideal_max_subscribers": 90000
+  },
+  "creator_led_shorts_reaction": {
+    "description": "Small creator-led reaction, comedy, and Shorts personalities with on-camera potential.",
+    "queries": [
+      "reaction shorts creator",
+      "funny reaction shorts creator",
+      "creator on camera shorts",
       "high energy shorts creator",
-      "comedy skit shorts creator",
-      "animated comedy shorts creator"
+      "comedy reaction shorts creator",
+      "family friendly reaction creator",
+      "funny on camera shorts creator",
+      "viral reaction shorts creator"
     ],
-    "positive_keywords": ["pov", "skit", "story", "storytime", "comedy", "funny", "shorts", "relatable", "reaction", "high energy", "friends", "challenge"],
-    "caution_keywords": ["too young", "kids only", "explicit", "adult", "18+", "dating", "club"],
-    "min_subscribers": 70000,
-    "max_subscribers": 500000,
-    "ideal_min_subscribers": 100000,
-    "ideal_max_subscribers": 350000
-  },
-  "food_asmr_satisfying_creator": {
-    "description": "Food, ASMR, satisfying, lifestyle, and sensory Shorts creators with viral-format potential.",
-    "queries": [
-      "food shorts creator",
-      "viral cooking shorts creator",
-      "asmr shorts creator",
-      "satisfying shorts creator",
-      "oddly satisfying shorts creator",
-      "snack review shorts creator",
-      "food challenge shorts creator",
-      "viral recipe shorts creator"
-    ],
-    "positive_keywords": ["food", "cooking", "recipe", "snack", "asmr", "satisfying", "viral", "shorts", "challenge", "review", "reaction", "trend"],
-    "caution_keywords": ["explicit", "adult", "18+", "diet pills", "weight loss scam", "gambling"],
-    "min_subscribers": 70000,
-    "max_subscribers": 500000,
-    "ideal_min_subscribers": 100000,
-    "ideal_max_subscribers": 350000
-  },
-  "minecraft_shorts_creator": {
-    "description": "Creators making Minecraft Shorts, build battles, challenges, skits, POVs, or funny Minecraft content.",
-    "queries": [
-      "minecraft shorts creator",
-      "minecraft challenge shorts",
-      "minecraft skit shorts",
-      "minecraft pov shorts"
-    ],
-    "positive_keywords": ["minecraft", "build battle", "challenge", "shorts", "pov", "skit", "funny", "roleplay", "server", "mod", "survival"],
-    "caution_keywords": ["too young", "kid", "kids only", "13", "14", "15", "16"],
-    "min_subscribers": 70000,
-    "max_subscribers": 500000,
-    "ideal_min_subscribers": 100000,
-    "ideal_max_subscribers": 350000
+    "positive_keywords": ["reaction", "reacts", "shorts", "funny", "comedy", "on camera", "creator", "challenge", "viral", "trend", "pov", "skit"],
+    "caution_keywords": ["explicit", "adult", "18+", "casino", "gambling", "dating", "onlyfans", "politics"],
+    "min_subscribers": 50000,
+    "max_subscribers": 100000,
+    "ideal_min_subscribers": 60000,
+    "ideal_max_subscribers": 90000
   }
 }
