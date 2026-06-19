@@ -1,65 +1,65 @@
 {
-  "minecraft_channels_under_100k": {
-    "description": "Minecraft channels under 100k subscribers, prioritizing creators with commentary, facecam, challenges, reactions, or personality-led content.",
+  "uriah_style_shorts_creator": {
+    "description": "Uriah Shorts-style creators: creator-led Shorts, fast comedy/reaction energy, family-friendly, adaptable to Minecraft/product content.",
     "queries": [
-      "minecraft youtuber under 100k",
-      "small minecraft youtuber",
+      "creator led shorts challenge",
+      "funny shorts creator challenge",
+      "viral shorts creator comedy",
+      "reaction shorts creator",
+      "high energy shorts creator",
+      "family friendly shorts creator",
+      "funny on camera shorts creator",
+      "shorts creator skit challenge",
+      "comedy challenge shorts creator",
+      "viral reaction shorts creator"
+    ],
+    "positive_keywords": ["shorts", "challenge", "reaction", "reacts", "funny", "comedy", "viral", "creator", "on camera", "family friendly", "skit", "pov", "friends", "trend", "minecraft"],
+    "caution_keywords": ["explicit", "adult", "18+", "gambling", "casino", "onlyfans", "politics", "drama", "harassment"],
+    "min_subscribers": 50000,
+    "max_subscribers": 250000,
+    "ideal_min_subscribers": 75000,
+    "ideal_max_subscribers": 175000
+  },
+  "minecraft_creator_led_channels": {
+    "description": "Minecraft channels with creator-led personality, reactions, challenges, commentary, or Shorts energy.",
+    "queries": [
       "minecraft challenge youtuber",
-      "minecraft facecam youtuber",
-      "minecraft survival youtuber",
-      "minecraft shorts creator",
       "minecraft funny youtuber",
+      "minecraft shorts creator",
+      "minecraft reaction youtuber",
+      "reacting to minecraft videos",
       "minecraft commentary youtuber",
       "minecraft but youtuber",
-      "minecraft smp youtuber"
+      "minecraft smp youtuber",
+      "minecraft facecam youtuber",
+      "minecraft creator on camera"
     ],
-    "positive_keywords": ["minecraft", "challenge", "facecam", "face cam", "commentary", "survival", "shorts", "funny", "reaction", "smp", "minecraft but", "creator"],
+    "positive_keywords": ["minecraft", "challenge", "reaction", "reacts", "commentary", "shorts", "funny", "facecam", "face cam", "on camera", "smp", "minecraft but", "creator"],
     "caution_keywords": ["faceless", "no face", "no commentary", "explicit", "adult", "18+", "gambling", "casino"],
     "min_subscribers": 50000,
-    "max_subscribers": 100000,
-    "ideal_min_subscribers": 60000,
-    "ideal_max_subscribers": 90000
+    "max_subscribers": 250000,
+    "ideal_min_subscribers": 75000,
+    "ideal_max_subscribers": 175000
   },
-  "reaction_channels_under_100k": {
-    "description": "Reaction channels under 100k subscribers, including gaming, Minecraft, comedy, meme, and viral reaction creators.",
+  "reaction_prank_challenge_channels": {
+    "description": "Reaction, prank, comedy, and challenge channels with creator-led on-camera entertainment energy.",
     "queries": [
-      "reaction youtuber under 100k",
-      "small reaction youtuber",
-      "gaming reaction youtuber",
-      "minecraft reaction youtuber",
+      "reaction youtuber",
       "funny reaction youtuber",
       "meme reaction youtuber",
       "viral videos reaction youtuber",
-      "youtube shorts reaction creator",
-      "reacting to minecraft videos",
-      "reaction shorts creator"
-    ],
-    "positive_keywords": ["reaction", "reacts", "reacting", "gaming", "minecraft", "funny", "memes", "shorts", "viral", "commentary", "facecam", "creator"],
-    "caution_keywords": ["explicit", "adult", "18+", "gambling", "casino", "onlyfans", "politics", "drama"],
-    "min_subscribers": 50000,
-    "max_subscribers": 100000,
-    "ideal_min_subscribers": 60000,
-    "ideal_max_subscribers": 90000
-  },
-  "prank_channels_under_100k": {
-    "description": "Prank and challenge channels under 100k subscribers with creator-led on-camera entertainment energy.",
-    "queries": [
-      "prank youtuber under 100k",
-      "small prank youtuber",
+      "prank youtuber",
       "funny prank youtuber",
       "clean prank youtuber",
-      "family friendly prank youtuber",
-      "public prank youtuber",
-      "challenge prank youtuber",
-      "prank shorts creator",
+      "public challenge youtuber",
       "funny challenge youtuber",
       "creator led prank shorts"
     ],
-    "positive_keywords": ["prank", "challenge", "funny", "public", "clean", "family friendly", "shorts", "creator", "reaction", "comedy", "friends", "viral"],
-    "caution_keywords": ["prank gone wrong", "explicit", "adult", "18+", "harassment", "casino", "gambling", "onlyfans"],
+    "positive_keywords": ["reaction", "reacts", "reacting", "prank", "challenge", "funny", "comedy", "public", "clean", "family friendly", "shorts", "creator", "friends", "viral"],
+    "caution_keywords": ["prank gone wrong", "explicit", "adult", "18+", "harassment", "gambling", "casino", "onlyfans", "politics"],
     "min_subscribers": 50000,
-    "max_subscribers": 100000,
-    "ideal_min_subscribers": 60000,
-    "ideal_max_subscribers": 90000
+    "max_subscribers": 250000,
+    "ideal_min_subscribers": 75000,
+    "ideal_max_subscribers": 175000
   }
 }
