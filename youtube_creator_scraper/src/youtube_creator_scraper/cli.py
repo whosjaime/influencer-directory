@@ -10,7 +10,16 @@ from typing import Any, Dict, Iterable, List, Set
 from .email_enrichment import extract_public_emails
 from .monday_client import push_rows_to_monday
 from .scoring import normalize_text, normalize_url, parse_int, score_channel, summarize_videos, tier_from_score
-from .youtube_api import YouTubeClient
+from .youtube_api import YouTubeClient, YouTubeQuotaExceeded
+
+TARGET_COUNTRIES = {"US", "CA", "GB", "UK", "AU"}
+COUNTRY_LABELS = {
+    "US": "United States",
+    "CA": "Canada",
+    "GB": "United Kingdom",
+    "UK": "United Kingdom",
+    "AU": "Australia",
+}
 
 
 def load_json(path: Path) -> Dict[str, Any]:
@@ -57,6 +66,17 @@ def is_blocked(channel: Dict[str, Any], blocked: Dict[str, Set[str]]) -> bool:
     )
 
 
+def country_code(channel: Dict[str, Any]) -> str:
+    return str(channel.get("snippet", {}).get("country", "")).upper().strip()
+
+
+def in_target_country(channel: Dict[str, Any], args: argparse.Namespace) -> bool:
+    if not args.target_countries_only:
+        return True
+    code = country_code(channel)
+    return code in TARGET_COUNTRIES
+
+
 def in_subscriber_range(channel: Dict[str, Any], profile: Dict[str, Any], args: argparse.Namespace) -> bool:
     subscribers = parse_int(channel.get("statistics", {}).get("subscriberCount"))
     min_subscribers = args.min_subscribers if args.min_subscribers is not None else profile.get("min_subscribers", 0)
@@ -72,6 +92,7 @@ def channel_to_row(channel: Dict[str, Any], profile_name: str, profile: Dict[str
     youtube_url = f"https://www.youtube.com/{custom_url}" if custom_url else f"https://www.youtube.com/channel/{channel_id}"
     description = snippet.get("description", "")
     public_emails = extract_public_emails(description)
+    code = country_code(channel)
 
     return {
         "name": snippet.get("title", ""),
@@ -84,7 +105,7 @@ def channel_to_row(channel: Dict[str, Any], profile_name: str, profile: Dict[str
         "subscribers": parse_int(stats.get("subscriberCount")),
         "total_views": parse_int(stats.get("viewCount")),
         "video_count": parse_int(stats.get("videoCount")),
-        "country": snippet.get("country", ""),
+        "country": COUNTRY_LABELS.get(code, code),
         "last_posted_date": video_summary.get("last_posted_at", ""),
         "videos_last_30_days": video_summary.get("videos_last_30_days", 0),
         "shorts_ratio": video_summary.get("shorts_ratio", 0),
@@ -103,6 +124,40 @@ def channel_to_row(channel: Dict[str, Any], profile_name: str, profile: Dict[str
     }
 
 
+def discover_channel_ids(client: YouTubeClient, profile_name: str, profile: Dict[str, Any], args: argparse.Namespace) -> Set[str]:
+    channel_ids: Set[str] = set()
+    for query in profile["queries"]:
+        print(f"Searching videos: {profile_name} / {query}")
+        page_token = None
+        pages = 0
+        while pages < args.pages_per_query:
+            data = client.search_videos(query=query, max_results=50, page_token=page_token)
+            for item in data.get("items", []):
+                channel_id = item.get("snippet", {}).get("channelId")
+                if channel_id:
+                    channel_ids.add(channel_id)
+            page_token = data.get("nextPageToken")
+            pages += 1
+            if not page_token:
+                break
+
+        # Channel search is weaker, but it can still catch creators whose channel metadata matches.
+        print(f"Searching channels: {profile_name} / {query}")
+        page_token = None
+        pages = 0
+        while pages < max(1, args.channel_pages_per_query):
+            data = client.search_channels(query=query, max_results=50, page_token=page_token)
+            for item in data.get("items", []):
+                channel_id = item.get("snippet", {}).get("channelId")
+                if channel_id:
+                    channel_ids.add(channel_id)
+            page_token = data.get("nextPageToken")
+            pages += 1
+            if not page_token:
+                break
+    return channel_ids
+
+
 def discover(args: argparse.Namespace) -> None:
     profiles = load_json(Path(args.config))
     selected_profiles = profiles if args.profile == "all" else {args.profile: profiles[args.profile]}
@@ -113,28 +168,23 @@ def discover(args: argparse.Namespace) -> None:
     client = YouTubeClient(api_key=args.api_key)
     discovered_ids: Dict[str, Set[str]] = {profile_name: set() for profile_name in selected_profiles}
 
-    for profile_name, profile in selected_profiles.items():
-        for query in profile["queries"]:
-            print(f"Searching: {profile_name} / {query}")
-            page_token = None
-            pages = 0
-            while pages < args.pages_per_query:
-                data = client.search_channels(query=query, max_results=50, page_token=page_token)
-                for item in data.get("items", []):
-                    channel_id = item.get("snippet", {}).get("channelId")
-                    if channel_id:
-                        discovered_ids[profile_name].add(channel_id)
-                page_token = data.get("nextPageToken")
-                pages += 1
-                if not page_token:
-                    break
+    try:
+        for profile_name, profile in selected_profiles.items():
+            discovered_ids[profile_name] = discover_channel_ids(client, profile_name, profile, args)
+    except YouTubeQuotaExceeded as exc:
+        print(f"YouTube quota reached while discovering channels. Saving partial results. {exc}")
 
     rows: List[Dict[str, Any]] = []
     seen_channel_ids: Set[str] = set()
 
     for profile_name, channel_ids in discovered_ids.items():
         profile = selected_profiles[profile_name]
-        channels = client.get_channels(channel_ids)
+        try:
+            channels = client.get_channels(channel_ids)
+        except YouTubeQuotaExceeded as exc:
+            print(f"YouTube quota reached while loading channels. Saving partial results. {exc}")
+            break
+
         for channel in channels:
             channel_id = channel.get("id", "")
             if channel_id in seen_channel_ids:
@@ -142,20 +192,31 @@ def discover(args: argparse.Namespace) -> None:
             seen_channel_ids.add(channel_id)
             if is_blocked(channel, do_not_contact):
                 continue
+            if not in_target_country(channel, args):
+                continue
             if not in_subscriber_range(channel, profile, args):
                 continue
 
             uploads_playlist = channel.get("contentDetails", {}).get("relatedPlaylists", {}).get("uploads", "")
-            video_items = client.get_playlist_items(uploads_playlist, max_results=args.recent_videos) if uploads_playlist else []
-            video_ids = [item.get("contentDetails", {}).get("videoId", "") for item in video_items]
+            try:
+                video_items = client.get_playlist_items(uploads_playlist, max_results=args.recent_videos) if uploads_playlist else []
+                video_ids = [item.get("contentDetails", {}).get("videoId", "") for item in video_items]
 
-            if not video_ids:
-                fallback_items = client.search_recent_videos_for_channel(channel_id, max_results=args.recent_videos)
-                video_ids = [item.get("id", {}).get("videoId", "") for item in fallback_items]
+                if not video_ids:
+                    fallback_items = client.search_recent_videos_for_channel(channel_id, max_results=args.recent_videos)
+                    video_ids = [item.get("id", {}).get("videoId", "") for item in fallback_items]
 
-            videos = client.get_videos(video_ids)
+                videos = client.get_videos(video_ids)
+            except YouTubeQuotaExceeded as exc:
+                print(f"YouTube quota reached while checking videos. Saving partial results. {exc}")
+                break
+
             video_summary = summarize_videos(videos, profile.get("positive_keywords", []), profile.get("caution_keywords", []))
             score, reasons = score_channel(channel, video_summary, profile)
+            code = country_code(channel)
+            if code in TARGET_COUNTRIES:
+                score += 15
+                reasons.append(f"target country: {COUNTRY_LABELS.get(code, code)}")
             if score < args.min_score:
                 continue
             rows.append(channel_to_row(channel, profile_name, profile, video_summary, score, reasons))
@@ -210,11 +271,13 @@ def parse_args(argv: Iterable[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--profile", default="all", help="Profile name from config, or all.")
     parser.add_argument("--do-not-contact", default="data/do_not_contact.csv", help="CSV of already-contacted creators to exclude.")
     parser.add_argument("--out-dir", default="output", help="Output directory.")
-    parser.add_argument("--pages-per-query", type=int, default=1, help="Each search page costs quota. Start with 1.")
-    parser.add_argument("--recent-videos", type=int, default=20, help="How many recent uploads to score.")
-    parser.add_argument("--min-score", type=int, default=40, help="Minimum fit score to keep.")
+    parser.add_argument("--pages-per-query", type=int, default=1, help="Video search pages per query. Each page costs quota.")
+    parser.add_argument("--channel-pages-per-query", type=int, default=1, help="Channel search pages per query. Keep low to save quota.")
+    parser.add_argument("--recent-videos", type=int, default=3, help="How many recent uploads to score.")
+    parser.add_argument("--min-score", type=int, default=35, help="Minimum fit score to keep.")
     parser.add_argument("--min-subscribers", type=int, default=None, help="Optional hard minimum subscriber count override.")
     parser.add_argument("--max-subscribers", type=int, default=None, help="Optional hard maximum subscriber count override.")
+    parser.add_argument("--target-countries-only", action=argparse.BooleanOptionalAction, default=True, help="Only keep US, Canada, UK, and Australia channels.")
     parser.add_argument("--push-monday", action="store_true", help="Automatically create Monday.com items for the leads.")
     parser.add_argument("--monday-board-id", default=os.getenv("MONDAY_BOARD_ID"), help="Monday board ID. Defaults to MONDAY_BOARD_ID env var.")
     parser.add_argument("--monday-group-id", default=os.getenv("MONDAY_GROUP_ID"), help="Optional Monday group ID. Defaults to MONDAY_GROUP_ID env var.")
