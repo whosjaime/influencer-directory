@@ -1,0 +1,54 @@
+name: Import Creators to monday
+
+on:
+  workflow_dispatch:
+    inputs:
+      file_path:
+        description: CSV file to import
+        required: true
+        default: data/sample_creators.csv
+      group:
+        description: monday group key
+        required: true
+        default: new_leads
+      min_fit_score:
+        description: Minimum TikTok/Shorts fit score
+        required: true
+        default: "70"
+      skip_fit_filter:
+        description: Skip TikTok/Shorts fit filter
+        required: true
+        type: boolean
+        default: false
+
+jobs:
+  import-creators:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Import creators to monday
+        env:
+          MONDAY_TOKEN: ${{ secrets.MONDAY_TOKEN }}
+          MONDAY_API_KEY: ${{ secrets.MONDAY_API_KEY }}
+          MONDAY_BOARD_ID: ${{ vars.MONDAY_BOARD_ID || '18416535896' }}
+          MONDAY_DEFAULT_GROUP_ID: ${{ vars.MONDAY_DEFAULT_GROUP_ID || 'group_mm41wfhq' }}
+        run: |
+          COMMAND="python src/import_creators.py --file '${{ inputs.file_path }}' --group '${{ inputs.group }}' --min-fit-score '${{ inputs.min_fit_score }}'"
+
+          if [ "${{ inputs.skip_fit_filter }}" = "true" ]; then
+            COMMAND="$COMMAND --skip-fit-filter"
+          fi
+
+          echo "Running: $COMMAND"
+          eval "$COMMAND"
