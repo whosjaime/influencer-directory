@@ -1,6 +1,8 @@
 name: Import Creators to monday
 
 on:
+  schedule:
+    - cron: "0 13 * * *"
   workflow_dispatch:
     inputs:
       file_path:
@@ -17,6 +19,11 @@ on:
         default: "70"
       skip_fit_filter:
         description: Skip TikTok/Shorts fit filter
+        required: true
+        type: boolean
+        default: false
+      skip_dedupe:
+        description: Skip monday duplicate check
         required: true
         type: boolean
         default: false
@@ -43,11 +50,20 @@ jobs:
           MONDAY_API_KEY: ${{ secrets.MONDAY_API_KEY }}
           MONDAY_BOARD_ID: ${{ vars.MONDAY_BOARD_ID || '18416535896' }}
           MONDAY_DEFAULT_GROUP_ID: ${{ vars.MONDAY_DEFAULT_GROUP_ID || 'group_mm41wfhq' }}
+          INPUT_FILE_PATH: ${{ github.event.inputs.file_path || 'data/sample_creators.csv' }}
+          INPUT_GROUP: ${{ github.event.inputs.group || 'new_leads' }}
+          INPUT_MIN_FIT_SCORE: ${{ github.event.inputs.min_fit_score || '70' }}
+          INPUT_SKIP_FIT_FILTER: ${{ github.event.inputs.skip_fit_filter || 'false' }}
+          INPUT_SKIP_DEDUPE: ${{ github.event.inputs.skip_dedupe || 'false' }}
         run: |
-          COMMAND="python src/import_creators.py --file '${{ inputs.file_path }}' --group '${{ inputs.group }}' --min-fit-score '${{ inputs.min_fit_score }}'"
+          COMMAND="python src/import_creators.py --file '$INPUT_FILE_PATH' --group '$INPUT_GROUP' --min-fit-score '$INPUT_MIN_FIT_SCORE'"
 
-          if [ "${{ inputs.skip_fit_filter }}" = "true" ]; then
+          if [ "$INPUT_SKIP_FIT_FILTER" = "true" ]; then
             COMMAND="$COMMAND --skip-fit-filter"
+          fi
+
+          if [ "$INPUT_SKIP_DEDUPE" = "true" ]; then
+            COMMAND="$COMMAND --skip-dedupe"
           fi
 
           echo "Running: $COMMAND"
