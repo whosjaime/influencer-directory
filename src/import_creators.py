@@ -1,7 +1,8 @@
 import argparse
 import pandas as pd
+from dedupe_utils import creator_keys, is_blocked_creator, load_blocklist
 from discovery_filters import DEFAULT_MIN_FIT_SCORE, filter_creators
-from monday_client import create_creator_item, GROUP_IDS
+from monday_client import create_creator_item, get_existing_creator_keys, GROUP_IDS
 
 
 def normalize_row(row: dict) -> dict:
@@ -16,11 +17,40 @@ def normalize_row(row: dict) -> dict:
     return cleaned
 
 
+def remove_blocked_and_duplicates(creators: list[dict]) -> tuple[list[dict], int, int]:
+    blocklist = load_blocklist()
+    existing_keys = get_existing_creator_keys()
+    seen_keys = set()
+    importable = []
+    blocked_count = 0
+    duplicate_count = 0
+
+    for creator in creators:
+        keys = creator_keys(creator)
+        label = creator.get("handle") or creator.get("creator_name") or creator.get("name") or "Unknown creator"
+
+        if is_blocked_creator(creator, blocklist):
+            blocked_count += 1
+            print(f"Skipped blocked creator: {label}")
+            continue
+
+        if keys & existing_keys or keys & seen_keys:
+            duplicate_count += 1
+            print(f"Skipped duplicate creator: {label}")
+            continue
+
+        seen_keys.update(keys)
+        importable.append(creator)
+
+    return importable, blocked_count, duplicate_count
+
+
 def import_csv(
     file_path: str,
     group_key: str = "new_leads",
     min_fit_score: int = DEFAULT_MIN_FIT_SCORE,
     apply_fit_filter: bool = True,
+    apply_dedupe: bool = True,
 ) -> None:
     group_id = GROUP_IDS.get(group_key)
 
@@ -37,7 +67,11 @@ def import_csv(
 
         for creator, fit in rejected:
             label = creator.get("handle") or creator.get("creator_name") or creator.get("name") or "Unknown creator"
-            print(f"Skipped {label}: score {fit.score} / reasons: {', '.join(fit.reasons)}")
+            print(f"Skipped non-fit creator {label}: score {fit.score} / reasons: {', '.join(fit.reasons)}")
+
+    if apply_dedupe:
+        creators, blocked_count, duplicate_count = remove_blocked_and_duplicates(creators)
+        print(f"Dedupe/blocklist filter: keeping {len(creators)} creators, skipped {duplicate_count} duplicates and {blocked_count} blocked creators")
 
     print(f"Importing {len(creators)} creators into monday group: {group_key}")
 
@@ -71,6 +105,11 @@ if __name__ == "__main__":
         action="store_true",
         help="Import every row without the TikTok/Shorts lookalike fit filter",
     )
+    parser.add_argument(
+        "--skip-dedupe",
+        action="store_true",
+        help="Do not check monday.com for existing creators before importing",
+    )
 
     args = parser.parse_args()
     import_csv(
@@ -78,4 +117,5 @@ if __name__ == "__main__":
         args.group,
         min_fit_score=args.min_fit_score,
         apply_fit_filter=not args.skip_fit_filter,
+        apply_dedupe=not args.skip_dedupe,
     )
