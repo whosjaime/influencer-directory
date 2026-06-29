@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import datetime
 from urllib.parse import urlparse
 
 
@@ -66,12 +65,7 @@ EXCLUDE_SIGNALS = {
     "beauty",
     "makeup",
     "fashion",
-    "onlyfans",
-    "nsfw",
-    "adult",
-    "alcohol",
-    "vape",
-    "weed",
+    "age-restricted",
     "gambling",
 }
 
@@ -142,15 +136,17 @@ def contains_any(text: str, signals: set[str]) -> bool:
 
 
 def is_tiktok_creator(creator: dict) -> bool:
-    text = creator_text(creator)
+    platform = normalize_text(creator.get("platform", ""))
+    profile_url = normalize_text(creator.get("profile_url", ""))
     domain = profile_domain(creator)
-    return "tiktok" in text or domain == "tiktok.com"
+    return platform == "tiktok" or "tiktok.com/@" in profile_url or domain == "tiktok.com"
 
 
 def is_youtube_creator(creator: dict) -> bool:
-    text = creator_text(creator)
+    platform = normalize_text(creator.get("platform", ""))
+    profile_url = normalize_text(creator.get("profile_url", ""))
     domain = profile_domain(creator)
-    return "youtube" in text or "youtu.be" in domain or "youtube.com" in domain
+    return platform == "youtube" or "youtube.com" in profile_url or "youtu.be" in domain or "youtube.com" in domain
 
 
 def has_short_form_signal(creator: dict) -> bool:
