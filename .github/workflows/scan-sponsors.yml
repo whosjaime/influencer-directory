@@ -1,6 +1,15 @@
 name: Daily Sponsor Lead Scan
 
 on:
+  pull_request:
+    paths:
+      - "src/*sponsor*.py"
+      - "src/brand_enrichment.py"
+      - "src/creator_classifier.py"
+      - "src/discord_notifier.py"
+      - "src/youtube_sponsor_scanner.py"
+      - "tests/test_sponsor_*.py"
+      - ".github/workflows/scan-sponsors.yml"
   schedule:
     - cron: "0 14 * * *"
   workflow_dispatch:
@@ -16,7 +25,7 @@ on:
 
 # Never allow two sponsor scanners to write to monday at the same time.
 concurrency:
-  group: sponsor-lead-scanner
+  group: sponsor-lead-scanner-${{ github.event_name }}
   cancel-in-progress: false
 
 jobs:
@@ -42,6 +51,7 @@ jobs:
           python -m unittest discover -s tests -p 'test_sponsor_*.py'
 
       - name: Scan public sponsorships and import NEW leads
+        if: github.event_name != 'pull_request'
         env:
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
           SPONSOR_MONDAY_TOKEN: ${{ secrets.SPONSOR_MONDAY_TOKEN }}
