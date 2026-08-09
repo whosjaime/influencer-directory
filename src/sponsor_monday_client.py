@@ -181,6 +181,24 @@ class SponsorMondayClient:
             cursor = page.get("cursor")
         return items
 
+    @staticmethod
+    def _stored_column_value(field: str, column: dict) -> str:
+        text = column.get("text") or ""
+        raw_value = column.get("value") or ""
+        if not raw_value:
+            return text
+        try:
+            payload = json.loads(raw_value)
+        except (TypeError, ValueError, json.JSONDecodeError):
+            return text
+        if not isinstance(payload, dict):
+            return text
+        if field == "brand_domain":
+            return payload.get("url") or text
+        if field == "contact_email":
+            return payload.get("email") or text
+        return text
+
     def load_existing_index(self) -> ExistingSponsorIndex:
         columns, _ = self.load_schema()
         id_to_field = {column.id: field for field, column in columns.items()}
@@ -196,7 +214,7 @@ class SponsorMondayClient:
             for column in item.get("column_values", []) or []:
                 field = id_to_field.get(column.get("id", ""))
                 if field:
-                    values[field] = column.get("text") or ""
+                    values[field] = self._stored_column_value(field, column)
 
             brand_name = normalize_brand_name(values.get("brand_name", ""))
             domain = normalize_domain(values.get("brand_domain", ""))
