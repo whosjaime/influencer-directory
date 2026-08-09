@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import sys
 import unittest
 from pathlib import Path
@@ -8,9 +9,10 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from creator_classifier import classify_creator
-from sponsor_dedupe import ExistingSponsorIndex
+from sponsor_dedupe import ExistingSponsorIndex, normalize_domain
 from sponsor_detector import detect_sponsors, to_sponsor_lead
 from sponsor_models import ChannelRecord, VideoRecord
+from sponsor_monday_client import SponsorMondayClient
 
 
 class SponsorScannerTests(unittest.TestCase):
@@ -62,6 +64,18 @@ class SponsorScannerTests(unittest.TestCase):
 
         index = ExistingSponsorIndex(brand_keys={"domain:nordvpn.com"})
         self.assertTrue(index.is_duplicate_brand(lead))
+
+    def test_marketing_subdomain_normalizes_to_brand_domain(self) -> None:
+        self.assertEqual(normalize_domain("https://go.nordvpn.com/creator"), "nordvpn.com")
+
+    def test_monday_link_column_uses_stored_url_not_display_text(self) -> None:
+        column = {
+            "text": "NordVPN",
+            "value": json.dumps({"url": "https://go.nordvpn.com/creator", "text": "NordVPN"}),
+        }
+        value = SponsorMondayClient._stored_column_value("brand_domain", column)
+        self.assertEqual(value, "https://go.nordvpn.com/creator")
+        self.assertEqual(normalize_domain(value), "nordvpn.com")
 
 
 if __name__ == "__main__":
