@@ -12,6 +12,11 @@ CORPORATE_SUFFIXES = {
     "company", "co", "plc", "gmbh", "group", "holdings",
 }
 
+MARKETING_SUBDOMAIN_PREFIXES = {
+    "www", "go", "try", "get", "shop", "link", "links", "partner", "partners",
+    "affiliate", "affiliates", "promo", "offer", "offers", "creator", "creators",
+}
+
 
 def normalize_text(value: object) -> str:
     return re.sub(r"\s+", " ", str(value or "").strip().lower())
@@ -30,10 +35,11 @@ def normalize_domain(value: str) -> str:
     if not raw:
         return ""
     parsed = urlparse(raw if "://" in raw else f"https://{raw}")
-    host = parsed.netloc.lower().split(":")[0]
-    if host.startswith("www."):
-        host = host[4:]
-    return host.strip(".")
+    host = parsed.netloc.lower().split(":")[0].strip(".")
+    parts = host.split(".")
+    while len(parts) >= 3 and parts[0] in MARKETING_SUBDOMAIN_PREFIXES:
+        parts.pop(0)
+    return ".".join(parts)
 
 
 def normalize_email(value: str) -> str:
@@ -61,7 +67,7 @@ def make_sponsorship_key(platform: str, video_id: str, brand_name: str, brand_do
 
 
 def lead_brand_keys(lead: SponsorLead) -> set[str]:
-    keys: set[str] = set()
+    keys = set()
     name = normalize_brand_name(lead.brand_name)
     domain = normalize_domain(lead.brand_domain)
     email = normalize_email(lead.contact_email)
