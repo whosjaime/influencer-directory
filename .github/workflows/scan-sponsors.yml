@@ -36,6 +36,11 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      - name: Validate sponsor scanner
+        run: |
+          python -m compileall -q src
+          python -m unittest discover -s tests -p 'test_sponsor_*.py'
+
       - name: Scan public sponsorships and import NEW leads
         env:
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
